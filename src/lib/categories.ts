@@ -10,7 +10,7 @@ export const CATEGORIES: Record<Category, CategoryConfig> = {
 };
 
 export function isCategory(value: string): value is Category {
-  return value in CATEGORIES;
+  return Object.prototype.hasOwnProperty.call(CATEGORIES, value);
 }
 
 export function categoryList(): CategoryConfig[] {

@@ -20,4 +20,11 @@ describe('categories', () => {
     expect(list).toHaveLength(6);
     expect(list[0]).toMatchObject({ id: 'frontend', color: '#4285F4' });
   });
+
+  it('rejects Object.prototype keys (no prototype pollution)', () => {
+    expect(isCategory('toString')).toBe(false);
+    expect(isCategory('constructor')).toBe(false);
+    expect(isCategory('__proto__')).toBe(false);
+    expect(isCategory('hasOwnProperty')).toBe(false);
+  });
 });
