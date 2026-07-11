@@ -28,8 +28,8 @@ const config: Config = {
         'primary-container': 'rgb(var(--primary-container) / <alpha-value>)',
       },
       fontFamily: {
-        heading: ['var(--font-heading)', 'system-ui', 'sans-serif'],
-        body: ['var(--font-body)', 'system-ui', 'sans-serif'],
+        heading: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Noto Sans SC', 'sans-serif'],
+        body: ['system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Noto Sans SC', 'sans-serif'],
       },
       borderRadius: {
         card: '16px',
