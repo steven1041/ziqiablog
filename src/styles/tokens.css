@@ -1,0 +1,21 @@
+:root {
+  --surface: 255 255 255;          /* #FFFFFF */
+  --surface-variant: 241 243 244;  /* #F1F3F4 */
+  --surface-dim: 248 249 250;      /* #F8F9FA */
+  --on-surface: 31 31 31;          /* #1F1F1F */
+  --on-surface-variant: 95 99 104; /* #5F6368 */
+  --outline: 218 220 224;          /* #DADCE0 */
+  --outline-variant: 232 234 237;  /* #E8EAED */
+  --primary-container: 211 227 253;/* #D3E3FD */
+}
+
+.dark {
+  --surface: 31 31 31;             /* #1F1F1F */
+  --surface-variant: 42 42 42;     /* #2A2A2A */
+  --surface-dim: 22 22 22;         /* #161616 */
+  --on-surface: 232 234 237;       /* #E8EAED */
+  --on-surface-variant: 154 160 166;/* #9AA0A6 */
+  --outline: 60 64 67;             /* #3C4043 */
+  --outline-variant: 42 42 42;     /* #2A2A2A */
+  --primary-container: 4 30 73;    /* #041E49 */
+}

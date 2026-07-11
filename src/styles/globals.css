@@ -1,0 +1,14 @@
+@import './tokens.css';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { font-family: var(--font-body), system-ui, sans-serif; }
+  body {
+    background: rgb(var(--surface));
+    color: rgb(var(--on-surface));
+    @apply antialiased;
+  }
+  h1, h2, h3, h4 { font-family: var(--font-heading), system-ui, sans-serif; }
+}
