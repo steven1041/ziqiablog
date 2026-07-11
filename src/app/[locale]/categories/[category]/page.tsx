@@ -1,5 +1,5 @@
 import { notFound } from 'next/navigation';
-import { isLocale, LOCALES, t } from '@/lib/i18n';
+import { isLocale, LOCALES } from '@/lib/i18n';
 import { getPostsByCategory } from '@/lib/posts';
 import { CATEGORIES, isCategory, categoryList } from '@/lib/categories';
 import { ArticleCard } from '@/components/ArticleCard';

@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import type { Locale } from '@/lib/types';
-import { LOCALES } from '@/lib/i18n';
 
 export function LangSwitch({ locale, currentPath }: { locale: Locale; currentPath: string }) {
   const segments = currentPath.split('/').filter(Boolean);

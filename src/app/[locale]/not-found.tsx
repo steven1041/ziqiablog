@@ -3,7 +3,7 @@ import { LOCALES, t, isLocale } from '@/lib/i18n';
 import type { Locale } from '@/lib/types';
 
 export default function LocaleNotFound({ params }: { params?: { locale?: string } }) {
-  const locale: Locale = params && params.locale && isLocale(params.locale) ? params.locale : 'en';
+  const locale: Locale = params && params.locale && isLocale(params.locale) ? params.locale : 'cn';
   return (
     <div className="grid min-h-[60vh] place-items-center px-6 text-center">
       <div>

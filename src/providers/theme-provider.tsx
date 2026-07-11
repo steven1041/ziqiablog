@@ -2,6 +2,7 @@
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
 import type { ReactNode } from 'react';
 
+// next-themes@0.3.0 does not export ThemeProviderProps, so we hand-roll it.
 type ThemeProviderProps = {
   children: ReactNode;
   attribute?: string | 'class';

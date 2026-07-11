@@ -1,5 +1,5 @@
 import { Feed } from 'feed';
-import type { Locale, PostMeta } from './types';
+import type { Locale } from './types';
 import { getAllPostsMeta } from './posts';
 
 const SITE_BASE = 'https://alex.dev';
