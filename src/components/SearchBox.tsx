@@ -1,6 +1,8 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import { t } from '@/lib/i18n';
+import type { Locale } from '@/lib/types';
 
 interface PagefindResult {
   id: string;
@@ -12,7 +14,7 @@ interface PagefindModule {
   search: (query: string) => Promise<{ results: PagefindResult[] }>;
 }
 
-export function SearchBox({ locale }: { locale: 'cn' | 'en' | 'all' }) {
+export function SearchBox({ locale }: { locale: Locale }) {
   const params = useSearchParams();
   const [q, setQ] = useState(params.get('q') ?? '');
   const [results, setResults] = useState<PagefindResult[]>([]);
@@ -40,7 +42,7 @@ export function SearchBox({ locale }: { locale: 'cn' | 'en' | 'all' }) {
         const data = await r.data();
         return { r, data };
       }));
-      const localeFiltered = locale === 'all' ? resolved : resolved.filter(({ data }) => data.url.startsWith(`/${locale}/`));
+      const localeFiltered = resolved.filter(({ data }) => data.url.startsWith(`/${locale}/`));
       if (!cancelled) setResults(localeFiltered.map((m) => m.r));
     })();
     return () => { cancelled = true; };
@@ -52,12 +54,12 @@ export function SearchBox({ locale }: { locale: 'cn' | 'en' | 'all' }) {
         type="search"
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder="搜索文章…"
+        placeholder={t(locale, 'search_placeholder')}
         className="w-full rounded-full border border-outline-variant px-5 py-3 text-base outline-none focus:border-google-blue-cta"
         aria-label="Search"
       />
-      {!q && <p className="mt-8 text-center text-on-surface-variant">输入关键词开始搜索</p>}
-      {q && results.length === 0 && loaded && <p className="mt-8 text-center text-on-surface-variant">没有找到相关结果</p>}
+      {!q && <p className="mt-8 text-center text-on-surface-variant">{t(locale, 'search_hint')}</p>}
+      {q && results.length === 0 && loaded && <p className="mt-8 text-center text-on-surface-variant">{t(locale, 'no_results')}</p>}
       <ul className="mt-6 space-y-3">
         {results.map((r) => <ResultItem key={r.id} result={r} />)}
       </ul>

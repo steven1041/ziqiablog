@@ -30,6 +30,7 @@ type UIStrings = {
   view_in_other_lang: string;
   back_home: string;
   search_placeholder: string;
+  search_hint: string;
   no_results: string;
   table_of_contents: string;
   previous: string;
@@ -47,6 +48,7 @@ const UI: Record<Locale, UIStrings> = {
     view_all: '查看全部', read_more: '阅读全文', reading_time: (n) => `${n} 分钟阅读`,
     not_translated: '暂未翻译', view_in_other_lang: '查看另一语种',
     back_home: '返回首页', search_placeholder: '搜索文章…',
+    search_hint: '输入关键词开始搜索',
     no_results: '没有找到相关结果', table_of_contents: '目录',
     previous: '上一篇', next: '下一篇', page_not_found: '页面未找到',
     rss: 'RSS',
@@ -60,7 +62,8 @@ const UI: Record<Locale, UIStrings> = {
     read_more: 'Read more', reading_time: (n) => `${n} min read`,
     not_translated: 'Not yet translated',
     view_in_other_lang: 'View in other language', back_home: 'Back home',
-    search_placeholder: 'Search posts…', no_results: 'No results found',
+    search_placeholder: 'Search posts…', search_hint: 'Type keywords to search',
+    no_results: 'No results found',
     table_of_contents: 'On this page', previous: 'Previous', next: 'Next',
     page_not_found: 'Page not found', rss: 'RSS',
   },

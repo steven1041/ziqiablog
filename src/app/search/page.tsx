@@ -1,10 +1,9 @@
-import { SearchBox } from '@/components/SearchBox';
-import { Suspense } from 'react';
+'use client';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-export default function SearchPage() {
-  return (
-    <Suspense fallback={<div className="py-12 text-center text-on-surface-variant">Loading…</div>}>
-      <SearchBox locale="all" />
-    </Suspense>
-  );
+export default function SearchRedirect() {
+  const router = useRouter();
+  useEffect(() => { router.replace('/cn/search'); }, [router]);
+  return null;
 }
