@@ -3,7 +3,7 @@ import path from 'node:path';
 import matter from 'gray-matter';
 import readingTime from 'reading-time';
 import type { Category, Locale, Post, PostMeta } from './types';
-import { isCategory } from './categories';
+import { isCategory, categoryList } from './categories';
 
 const DEFAULT_CONTENT_DIR = path.join(process.cwd(), 'content');
 let CONTENT_DIR = DEFAULT_CONTENT_DIR;
@@ -102,4 +102,12 @@ export async function getTranslation(targetLocale: Locale, translationKey: strin
 
 export async function getAllSlugs(locale: Locale): Promise<string[]> {
   return (await getAllPostsMeta(locale)).map((p) => p.slug);
+}
+
+export async function getPostsCountPerCategory(locale: Locale): Promise<Record<Category, number>> {
+  const all = await getAllPostsMeta(locale);
+  const counts = {} as Record<Category, number>;
+  categoryList().forEach((c) => (counts[c.id] = 0));
+  all.forEach((p) => { counts[p.category] = (counts[p.category] ?? 0) + 1; });
+  return counts;
 }
