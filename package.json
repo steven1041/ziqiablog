@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && npm run build:rss && npm run build:search",
-    "build:rss": "node scripts/build-rss.mjs",
+    "build:rss": "tsx scripts/build-rss.mjs",
     "build:search": "node scripts/build-search.mjs",
     "start": "next start",
     "test": "vitest run",
@@ -14,30 +14,31 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "^14.2.5",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "feed": "^4.2.2",
     "gray-matter": "^4.0.3",
+    "next": "^14.2.5",
     "next-mdx-remote": "^5.0.0",
     "next-themes": "^0.3.0",
-    "shiki": "^1.12.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "reading-time": "^1.5.0",
-    "feed": "^4.2.2"
+    "shiki": "^1.12.0"
   },
   "devDependencies": {
+    "@tailwindcss/typography": "^0.5.13",
+    "@testing-library/jest-dom": "^6.4.6",
+    "@testing-library/react": "^16.0.0",
     "@types/node": "^20.14.10",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "typescript": "^5.5.3",
-    "tailwindcss": "^3.4.6",
-    "postcss": "^8.4.39",
+    "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.19",
-    "@tailwindcss/typography": "^0.5.13",
-    "pagefind": "^1.1.0",
-    "vitest": "^2.0.3",
-    "@testing-library/react": "^16.0.0",
-    "@testing-library/jest-dom": "^6.4.6",
     "jsdom": "^24.1.0",
-    "@vitejs/plugin-react": "^4.3.1"
+    "pagefind": "^1.1.0",
+    "postcss": "^8.4.39",
+    "tailwindcss": "^3.4.6",
+    "tsx": "^4.23.0",
+    "typescript": "^5.5.3",
+    "vitest": "^2.0.3"
   }
 }
