@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { CATEGORIES } from '@/lib/categories';
 import { t, tf, localePath } from '@/lib/i18n';
+import { formatDate } from '@/lib/date';
 import type { Locale, PostMeta } from '@/lib/types';
 
 export function HeroCard({ post, locale }: { post: PostMeta; locale: Locale }) {
@@ -30,7 +31,7 @@ export function HeroCard({ post, locale }: { post: PostMeta; locale: Locale }) {
           <span className="grid h-10 w-10 place-items-center rounded-full font-bold text-white" style={{ background: `linear-gradient(135deg, ${cat.color}, #34A853)` }}>A</span>
           <div className="text-sm">
             <div className="font-bold">Alex Chen</div>
-            <div className="text-[13px] text-on-surface-variant">{post.date.replace(/-/g,'年').replace(/-/,'月')+'日'} · {tf(locale,'reading_time')(post.readingTime)}</div>
+            <div className="text-[13px] text-on-surface-variant">{formatDate(post.date, locale)} · {tf(locale,'reading_time')(post.readingTime)}</div>
           </div>
           <Link href={href} className="ml-auto rounded-full bg-google-blue-cta px-6 py-3 text-sm font-bold text-white shadow-[0_1px_3px_rgba(60,64,67,0.3)] transition-colors hover:bg-[#1765CC]">
             {t(locale,'read_more')}

@@ -39,7 +39,7 @@ async function readPostFile(file: string, locale: Locale): Promise<Post | null> 
     slug,
     translationKey: String(data.translationKey ?? slug),
     title: String(data.title ?? slug),
-    date: String(data.date ?? ''),
+    date: data.date instanceof Date ? data.date.toISOString().slice(0, 10) : String(data.date ?? ''),
     category: categoryRaw as Category,
     tags: Array.isArray(data.tags) ? data.tags.map(String) : [],
     readingTime: Math.max(1, Math.round(readingTime(content).minutes)),

@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import { CATEGORIES } from '@/lib/categories';
-import { t, tf } from '@/lib/i18n';
+import { t, tf, localePath } from '@/lib/i18n';
+import { formatDate } from '@/lib/date';
 import type { Locale, PostMeta } from '@/lib/types';
-import { localePath } from '@/lib/i18n';
 
 export function ArticleCard({ post, locale }: { post: PostMeta; locale: Locale }) {
   const cat = CATEGORIES[post.category];
@@ -25,7 +25,7 @@ export function ArticleCard({ post, locale }: { post: PostMeta; locale: Locale }
           <h3 className="mb-2 text-lg font-bold leading-snug">{post.title}</h3>
           <p className="mb-4 text-sm leading-relaxed text-on-surface-variant">{post.excerpt}</p>
           <div className="flex items-center justify-between text-[13px] text-on-surface-variant">
-            <span>{post.date.slice(0,7)} · {tf(locale,'reading_time')(post.readingTime)}</span>
+            <span>{formatDate(post.date, locale)} · {tf(locale,'reading_time')(post.readingTime)}</span>
             <span className="font-semibold text-google-blue-cta">{t(locale,'read_more')} →</span>
           </div>
         </div>
