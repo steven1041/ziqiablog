@@ -7,7 +7,7 @@
     "dev": "next dev",
     "build": "next build && npm run build:rss && npm run build:search",
     "build:rss": "node scripts/build-rss.mjs",
-    "build:search": "pagefind --site out",
+    "build:search": "node scripts/build-search.mjs",
     "start": "next start",
     "test": "vitest run",
     "test:watch": "vitest",
