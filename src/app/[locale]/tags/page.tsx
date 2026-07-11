@@ -1,8 +1,12 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { isLocale, t } from '@/lib/i18n';
+import { isLocale, LOCALES, t } from '@/lib/i18n';
 import { getAllTags } from '@/lib/posts';
 import type { Locale } from '@/lib/types';
+
+export function generateStaticParams() {
+  return LOCALES.map((locale) => ({ locale }));
+}
 
 export default async function TagsIndex({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) notFound();

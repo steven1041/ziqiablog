@@ -13,9 +13,9 @@ export default function LocaleLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: { locale: string };
+  params?: { locale?: string };
 }) {
-  if (!isLocale(params.locale)) notFound();
+  if (!params || !params.locale || !isLocale(params.locale)) notFound();
   const locale = params.locale as Locale;
   const currentPath = `/${locale}`;
   return (

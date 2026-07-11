@@ -1,13 +1,18 @@
 import { notFound } from 'next/navigation';
-import { isLocale, t } from '@/lib/i18n';
+import { isLocale, LOCALES, t } from '@/lib/i18n';
 import { getPostsByTag, getAllTags } from '@/lib/posts';
 import { ArticleCard } from '@/components/ArticleCard';
 import type { Locale } from '@/lib/types';
 
-export async function generateStaticParams({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) return [];
-  const locale = params.locale as Locale;
-  return (await getAllTags(locale)).map((tag) => ({ tag }));
+export async function generateStaticParams() {
+  const results: { locale: string; tag: string }[] = [];
+  for (const locale of LOCALES) {
+    const tags = await getAllTags(locale);
+    for (const tag of tags) {
+      results.push({ locale, tag });
+    }
+  }
+  return results;
 }
 
 export default async function TagPage({ params }: { params: { locale: string; tag: string } }) {

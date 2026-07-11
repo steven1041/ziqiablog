@@ -1,10 +1,14 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { isLocale, t } from '@/lib/i18n';
+import { isLocale, LOCALES, t } from '@/lib/i18n';
 import { categoryList } from '@/lib/categories';
 import { getPostsCountPerCategory } from '@/lib/posts';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import type { Locale } from '@/lib/types';
+
+export function generateStaticParams() {
+  return LOCALES.map((locale) => ({ locale }));
+}
 
 export default async function CategoriesIndex({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) notFound();

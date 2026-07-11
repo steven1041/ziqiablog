@@ -1,8 +1,12 @@
 import { notFound } from 'next/navigation';
-import { isLocale } from '@/lib/i18n';
+import { isLocale, LOCALES } from '@/lib/i18n';
 import { getAbout } from '@/lib/about';
 import { MDXContent } from '@/components/MDXContent';
 import type { Locale } from '@/lib/types';
+
+export function generateStaticParams() {
+  return LOCALES.map((locale) => ({ locale }));
+}
 
 export default async function AboutPage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) notFound();

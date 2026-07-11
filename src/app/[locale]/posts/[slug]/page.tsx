@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { isLocale, t, tf, localePath } from '@/lib/i18n';
+import { isLocale, LOCALES, t, tf, localePath } from '@/lib/i18n';
 import { getAllSlugs, getPost, getAllPostsMeta, getTranslation } from '@/lib/posts';
 import { CATEGORIES } from '@/lib/categories';
 import { extractToc } from '@/lib/toc';
@@ -9,9 +9,15 @@ import { TableOfContents } from '@/components/TableOfContents';
 import { LangSwitchPost } from '@/components/LangSwitchPost';
 import type { Locale } from '@/lib/types';
 
-export async function generateStaticParams({ params }: { params: { locale: string } }) {
-  const locale = params.locale as Locale;
-  return (await getAllSlugs(locale)).map((slug) => ({ slug }));
+export async function generateStaticParams() {
+  const results: { locale: string; slug: string }[] = [];
+  for (const locale of LOCALES) {
+    const slugs = await getAllSlugs(locale);
+    for (const slug of slugs) {
+      results.push({ locale, slug });
+    }
+  }
+  return results;
 }
 
 export default async function PostPage({ params }: { params: { locale: string; slug: string } }) {

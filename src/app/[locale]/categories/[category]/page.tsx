@@ -1,12 +1,13 @@
 import { notFound } from 'next/navigation';
-import { isLocale, t } from '@/lib/i18n';
+import { isLocale, LOCALES, t } from '@/lib/i18n';
 import { getPostsByCategory } from '@/lib/posts';
 import { CATEGORIES, isCategory, categoryList } from '@/lib/categories';
 import { ArticleCard } from '@/components/ArticleCard';
 import type { Locale, Category } from '@/lib/types';
 
-export async function generateStaticParams({ params }: { params: { locale: string } }) {
-  return categoryList().map((c) => ({ category: c.id }));
+export async function generateStaticParams() {
+  const cats = categoryList();
+  return LOCALES.flatMap((locale) => cats.map((c) => ({ locale, category: c.id })));
 }
 
 export default async function CategoryPage({ params }: { params: { locale: string; category: string } }) {

@@ -1,11 +1,15 @@
 import { notFound } from 'next/navigation';
-import { isLocale, t } from '@/lib/i18n';
+import { isLocale, LOCALES, t } from '@/lib/i18n';
 import { getAllPostsMeta, getFeatured } from '@/lib/posts';
 import { categoryList } from '@/lib/categories';
 import { HeroCard } from '@/components/HeroCard';
 import { ArticleCard } from '@/components/ArticleCard';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import type { Locale } from '@/lib/types';
+
+export function generateStaticParams() {
+  return LOCALES.map((locale) => ({ locale }));
+}
 
 export default async function HomePage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) notFound();
