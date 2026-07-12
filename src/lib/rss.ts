@@ -2,23 +2,22 @@ import { Feed } from 'feed';
 import type { Locale } from './types';
 import { getAllPostsMeta } from './posts';
 
-const SITE_BASE = 'https://alex.dev';
+const SITE_BASE = 'https://ziqia.cc';
 const AUTHOR = {
-  name: 'Alex Chen',
-  email: '109382921@qq.com',
-  link: 'https://alex.dev',
+  name: 'ziqia.cc',
+  link: 'https://ziqia.cc',
 };
 
 export async function buildFeedForLocale(locale: Locale): Promise<string> {
   const posts = (await getAllPostsMeta(locale)).slice(0, 20);
   const feed = new Feed({
-    title: locale === 'cn' ? 'Alex.dev — 技术博客' : 'Alex.dev — Tech Blog',
-    description: 'Personal tech blog by Alex Chen',
+    title: 'ziqia.cc — AI 开发技术博客',
+    description: '关于提示工程、AI 编码工作流、工具生态等 AI 开发技术文章',
     id: `${SITE_BASE}/`,
     link: `${SITE_BASE}/${locale}`,
-    language: locale === 'cn' ? 'zh-CN' : 'en',
+    language: 'zh-CN',
     image: `${SITE_BASE}/favicon.ico`,
-    copyright: `© ${new Date().getFullYear()} Alex Chen`,
+    copyright: `© ${new Date().getFullYear()} ziqia.cc`,
     author: AUTHOR,
   });
   for (const p of posts) {
