@@ -1,8 +1,8 @@
-export type Locale = 'cn' | 'en';
+export type Locale = 'cn';
 
 export interface CategoryConfig {
   id: Category;
-  label: Record<Locale, string>;
+  label: string;
   color: string;
   bgColor: string;
   bgColorDark: string;
@@ -27,5 +27,12 @@ export interface Post extends PostMeta {
 }
 
 export type Category =
-  | 'frontend' | 'backend' | 'architecture'
-  | 'devops' | 'ai' | 'life';
+  | 'prompt-engineering'
+  | 'ai-coding-workflows'
+  | 'tooling'
+  | 'quality'
+  | 'cost-efficiency'
+  | 'real-world'
+  | 'security'
+  | 'team-collab'
+  | 'ai-news';
