@@ -1,8 +1,15 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { isLocale, LOCALES } from '@/lib/i18n';
 import { getAbout } from '@/lib/about';
 import { MDXContent } from '@/components/MDXContent';
 import type { Locale } from '@/lib/types';
+
+export const metadata: Metadata = {
+  title: '关于',
+  description: '关于 ziqia.cc 博客',
+  alternates: { canonical: 'https://ziqia.cc/cn/about/' },
+};
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));

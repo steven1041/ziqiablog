@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { isLocale, LOCALES } from '@/lib/i18n';
 import { getPostsByTag, getAllTags } from '@/lib/posts';
@@ -13,6 +14,14 @@ export async function generateStaticParams() {
     }
   }
   return results;
+}
+
+export async function generateMetadata({ params }: { params: { locale: string; tag: string } }): Promise<Metadata> {
+  return {
+    title: `#${params.tag}`,
+    description: `包含标签 "${params.tag}" 的所有文章`,
+    alternates: { canonical: `https://ziqia.cc/${params.locale}/tags/${params.tag}/` },
+  };
 }
 
 export default async function TagPage({ params }: { params: { locale: string; tag: string } }) {

@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { ThemeToggle } from './ThemeToggle';
-import { LangSwitch } from './LangSwitch';
 import { t } from '@/lib/i18n';
 import type { Locale } from '@/lib/types';
 
@@ -22,7 +21,7 @@ export function Header({ locale, currentPath }: { locale: Locale; currentPath: s
             <span key={c} className="h-2 w-2 rounded-full" style={{ background: c }} />
           ))}
         </span>
-        <span className="font-heading text-xl font-bold tracking-tight text-google-blue-cta">Alex.dev</span>
+        <span className="font-heading text-xl font-bold tracking-tight text-google-blue-cta">ziqia.cc</span>
       </Link>
       <nav className="hidden gap-1 md:flex">
         {NAV.map((item) => {
@@ -40,7 +39,6 @@ export function Header({ locale, currentPath }: { locale: Locale; currentPath: s
         })}
       </nav>
       <div className="flex items-center gap-2">
-        <LangSwitch locale={locale} currentPath={currentPath} />
         <ThemeToggle />
       </div>
     </header>

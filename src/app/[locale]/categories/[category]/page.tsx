@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { isLocale, LOCALES } from '@/lib/i18n';
 import { getPostsByCategory } from '@/lib/posts';
@@ -10,6 +11,16 @@ export async function generateStaticParams() {
   return LOCALES.flatMap((locale) => cats.map((c) => ({ locale, category: c.id })));
 }
 
+export async function generateMetadata({ params }: { params: { locale: string; category: string } }): Promise<Metadata> {
+  if (!isCategory(params.category)) return {};
+  const cat = CATEGORIES[params.category];
+  return {
+    title: cat.label,
+    description: `${cat.label} 相关文章`,
+    alternates: { canonical: `https://ziqia.cc/${params.locale}/categories/${params.category}/` },
+  };
+}
+
 export default async function CategoryPage({ params }: { params: { locale: string; category: string } }) {
   if (!isLocale(params.locale) || !isCategory(params.category)) notFound();
   const locale = params.locale as Locale;
@@ -18,7 +29,7 @@ export default async function CategoryPage({ params }: { params: { locale: strin
   const cat = CATEGORIES[category];
   return (
     <div className="py-10">
-      <h1 className="mb-7 font-heading text-3xl font-bold tracking-tight">{cat.label[locale]}</h1>
+      <h1 className="mb-7 font-heading text-3xl font-bold tracking-tight">{cat.label}</h1>
       {posts.length === 0 ? (
         <p className="text-on-surface-variant">—</p>
       ) : (

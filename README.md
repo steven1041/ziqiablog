@@ -1,35 +1,49 @@
-# Alex.dev — 个人技术博客
+# ziqia.cc — AI 开发技术博客
 
-Bilingual (CN/EN) personal tech blog built with Next.js 14 + MDX, statically exported and deployed on Cloudflare Pages.
+单语言（中文）个人 AI 开发技术博客，使用 Next.js 14 + MDX 构建，静态导出并部署到 Cloudflare Pages。
 
-## Develop
+## 主题
+
+- 提示工程 (Prompt Engineering)
+- AI 编码工作流 (AI Coding Workflows)
+- 工具生态 (Tooling & Integration)
+- 质量保障 (Quality & Review)
+- 成本与效率 (Cost & Efficiency)
+- 项目实践 (Real-World Practices)
+- 安全与合规 (Security & Compliance)
+- 团队协作 (Team Collaboration)
+- 业界新闻 (AI News)
+
+## 开发
 
 ```bash
 npm install
 npm run dev     # http://localhost:3000 → /cn
 ```
 
-## Build
+## 构建
 
 ```bash
 npm run build   # next build + rss + pagefind
 ```
 
-Output: `out/`
+输出：`out/`
 
-## Tests
+## 测试
 
 ```bash
 npm test
 ```
 
-## Deploy on Cloudflare Pages
+## 部署到 Cloudflare Pages
 
-1. Create a new Cloudflare Pages project, connect this Git repository.
-2. Build command: `npm run build`
-3. Output directory: `out`
-4. Environment: Node 20
+1. 在 Cloudflare Pages 创建新项目并连接本仓库
+2. 构建命令：`npm run build`
+3. 输出目录：`out`
+4. 环境：Node 20
+5. 环境变量（可选）：
+   - `NEXT_PUBLIC_ADSENSE_CLIENT_ID`：Google AdSense 客户端 ID（不设置则不渲染广告脚本）
 
-## Fonts
+## 字体
 
-This build uses the system-ui font stack (`system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans SC', sans-serif`) instead of Google Fonts to avoid network dependencies during static export. If you prefer Google Fonts (Inter / Roboto / Noto Sans SC), revert the changes in `src/app/layout.tsx`, `src/styles/globals.css`, and `tailwind.config.ts`.
+构建使用 system-ui 字体栈避免静态导出的网络依赖。如需切换到 Google Fonts（Inter / Roboto / Noto Sans SC），修改 `src/app/layout.tsx`、`src/styles/globals.css` 和 `tailwind.config.ts`。

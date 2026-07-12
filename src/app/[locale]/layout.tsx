@@ -22,7 +22,7 @@ export default function LocaleLayout({
     <>
       <Header locale={locale} currentPath={currentPath} />
       <main className="mx-auto max-w-[1280px] px-5 md:px-10">{children}</main>
-      <Footer locale={locale} />
+      <Footer />
     </>
   );
 }

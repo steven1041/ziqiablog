@@ -18,14 +18,14 @@ export function ArticleCard({ post, locale }: { post: PostMeta; locale: Locale }
             className="m-3 inline-block rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold backdrop-blur"
             style={{ color: cat.color }}
           >
-            {cat.label[locale]}
+            {cat.label}
           </span>
         </div>
         <div className="p-4">
           <h3 className="mb-2 text-lg font-bold leading-snug">{post.title}</h3>
           <p className="mb-4 text-sm leading-relaxed text-on-surface-variant">{post.excerpt}</p>
           <div className="flex items-center justify-between text-[13px] text-on-surface-variant">
-            <span>{formatDate(post.date, locale)} · {tf(locale,'reading_time')(post.readingTime)}</span>
+            <span>{formatDate(post.date)} · {tf(locale,'reading_time')(post.readingTime)}</span>
             <span className="font-semibold text-google-blue-cta">{t(locale,'read_more')} →</span>
           </div>
         </div>

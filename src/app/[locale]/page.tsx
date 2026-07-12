@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { isLocale, LOCALES, t } from '@/lib/i18n';
 import { getAllPostsMeta, getFeatured } from '@/lib/posts';
@@ -6,6 +7,12 @@ import { HeroCard } from '@/components/HeroCard';
 import { ArticleCard } from '@/components/ArticleCard';
 import { CategoryIcon } from '@/components/CategoryIcon';
 import type { Locale } from '@/lib/types';
+
+export const metadata: Metadata = {
+  title: 'ziqia.cc — AI 开发技术博客',
+  description: '关于提示工程、AI 编码工作流、工具生态等 AI 开发技术文章',
+  alternates: { canonical: 'https://ziqia.cc/cn/' },
+};
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
@@ -43,8 +50,10 @@ export default async function HomePage({ params }: { params: { locale: string } 
             <p className="mt-1 text-sm text-on-surface-variant">{t(locale,'browse_categories_sub')}</p>
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-          {cats.map((c) => <CategoryIcon key={c.id} category={c.id} size={56} />)}
+        <div className="grid grid-cols-3 gap-4 md:grid-cols-5 lg:grid-cols-9">
+          {cats.map((c) => (
+            <CategoryIcon key={c.id} category={c.id} size={56} label={c.label} href={`/${locale}/categories/${c.id}/`} />
+          ))}
         </div>
       </section>
     </div>

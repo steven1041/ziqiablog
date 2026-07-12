@@ -28,10 +28,10 @@ export function HeroCard({ post, locale }: { post: PostMeta; locale: Locale }) {
         <h1 className="mb-4 font-heading text-2xl font-bold leading-tight tracking-tight md:text-4xl">{post.title}</h1>
         <p className="mb-7 max-w-md text-base leading-relaxed text-on-surface-variant">{post.excerpt}</p>
         <div className="flex items-center gap-3 border-t border-outline-variant pt-5">
-          <span className="grid h-10 w-10 place-items-center rounded-full font-bold text-white" style={{ background: `linear-gradient(135deg, ${cat.color}, #34A853)` }}>A</span>
+          <span className="grid h-10 w-10 place-items-center rounded-full font-bold text-white" style={{ background: `linear-gradient(135deg, ${cat.color}, #34A853)` }}>Z</span>
           <div className="text-sm">
-            <div className="font-bold">Alex Chen</div>
-            <div className="text-[13px] text-on-surface-variant">{formatDate(post.date, locale)} · {tf(locale,'reading_time')(post.readingTime)}</div>
+            <div className="font-bold">ziqia.cc</div>
+            <div className="text-[13px] text-on-surface-variant">{formatDate(post.date)} · {tf(locale,'reading_time')(post.readingTime)}</div>
           </div>
           <Link href={href} className="ml-auto rounded-full bg-google-blue-cta px-6 py-3 text-sm font-bold text-white shadow-[0_1px_3px_rgba(60,64,67,0.3)] transition-colors hover:bg-[#1765CC]">
             {t(locale,'read_more')}
