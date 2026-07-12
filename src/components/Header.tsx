@@ -10,16 +10,22 @@ const NAV: { key: 'articles' | 'categories' | 'tags' | 'about'; path: string }[]
   { key: 'about', path: 'about' },
 ];
 
-const DOT_COLORS = ['#4285F4', '#EA4335', '#FBBC04', '#34A853'];
+export function SealLogo() {
+  return (
+    <svg width="28" height="28" viewBox="0 0 28 28" className="flex-shrink-0">
+      <circle cx="14" cy="14" r="12.5" fill="none" stroke="#C62828" strokeWidth="1.5" />
+      <circle cx="14" cy="14" r="10" fill="none" stroke="#C62828" strokeWidth="0.5" opacity="0.4" />
+      <text x="14" y="19" textAnchor="middle" fontSize="14" fontWeight="bold" fill="#C62828" fontFamily="serif">洽</text>
+    </svg>
+  );
+}
 
 export function Header({ locale, currentPath }: { locale: Locale; currentPath: string }) {
   return (
     <header className="sticky top-0 z-50 flex items-center justify-between gap-4 border-b border-outline-variant bg-surface/90 px-5 py-4 backdrop-blur-md md:px-10">
       <Link href={`/${locale}`} className="flex items-center gap-2.5">
         <span className="flex gap-1">
-          {DOT_COLORS.map((c) => (
-            <span key={c} className="h-2 w-2 rounded-full" style={{ background: c }} />
-          ))}
+          <SealLogo />
         </span>
         <span className="font-heading text-xl font-bold tracking-tight text-google-blue-cta">ZiQia.cc</span>
       </Link>
