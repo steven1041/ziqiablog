@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && npm run build:rss && npm run build:search",
+    "build": "next build",
     "build:rss": "tsx scripts/build-rss.mjs",
     "build:search": "node scripts/build-search.mjs",
     "start": "next start",
