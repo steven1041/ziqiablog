@@ -898,7 +898,17 @@ describe('HeroCard', () => {
 
 文件其他内容保持不变。
 
-- [ ] **Step 4: 运行测试**
+- [ ] **Step 4: 同步修复分类相关页面**
+
+修改 `src/app/[locale]/categories/page.tsx`：
+- 第 26 行 `{c.label[locale]}` 改为 `{c.label}`
+
+修改 `src/app/[locale]/categories/[category]/page.tsx`：
+- 第 21 行 `{cat.label[locale]}` 改为 `{cat.label}`
+
+文件其他内容保持不变。
+
+- [ ] **Step 5: 运行测试**
 
 ```bash
 npm test -- tests/components/HeroCard.test.tsx tests/components/ArticleCard.test.tsx
@@ -909,8 +919,8 @@ npm test -- tests/components/HeroCard.test.tsx tests/components/ArticleCard.test
 - [ ] **Step 5: 提交**
 
 ```bash
-git add src/components/HeroCard.tsx src/components/ArticleCard.tsx tests/components/HeroCard.test.tsx
-git commit -m "refactor: HeroCard 与 ArticleCard 品牌替换，formatDate 去掉 locale 参数"
+git add src/components/HeroCard.tsx src/components/ArticleCard.tsx src/app/\[locale\]/categories/page.tsx src/app/\[locale\]/categories/\[category\]/page.tsx tests/components/HeroCard.test.tsx
+git commit -m "refactor: HeroCard 与 ArticleCard 品牌替换，formatDate 去掉 locale 参数，分类页改用单字符串 label"
 ```
 
 ---
@@ -1481,7 +1491,7 @@ export const metadata: Metadata = {
 
 - [ ] **Step 4: 为文章详情页 `posts/[slug]/page.tsx` 添加 generateMetadata**
 
-把当前的 `import { isLocale, LOCALES, t, tf, localePath } from '@/lib/i18n';` 修改为同时导入 `Metadata` 类型，并在 `generateStaticParams` 后新增：
+在 `posts/[slug]/page.tsx` 现有 import 块的任意位置添加 `import type { Metadata } from 'next';`（不要修改其他 import 行的内容），然后在 `generateStaticParams` 函数之后新增：
 
 ```tsx
 import type { Metadata } from 'next';
