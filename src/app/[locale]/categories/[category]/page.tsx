@@ -11,20 +11,20 @@ export async function generateStaticParams() {
   return LOCALES.flatMap((locale) => cats.map((c) => ({ locale, category: c.id })));
 }
 
-export async function generateMetadata({ params }: { params: { locale: string; category: string } }): Promise<Metadata> {
-  if (!isCategory(params.category)) return {};
-  const cat = CATEGORIES[params.category];
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; category: string }> }): Promise<Metadata> {
+  const { locale, category } = await params;
+  if (!isCategory(category)) return {};
+  const cat = CATEGORIES[category];
   return {
     title: cat.label,
     description: `${cat.label} 相关文章`,
-    alternates: { canonical: `https://ziqia.cc/${params.locale}/categories/${params.category}/` },
+    alternates: { canonical: `https://ziqia.cc/${locale}/categories/${category}/` },
   };
 }
 
-export default async function CategoryPage({ params }: { params: { locale: string; category: string } }) {
-  if (!isLocale(params.locale) || !isCategory(params.category)) notFound();
-  const locale = params.locale as Locale;
-  const category = params.category as Category;
+export default async function CategoryPage({ params }: { params: Promise<{ locale: string; category: string }> }) {
+  const { locale, category } = await params;
+  if (!isLocale(locale) || !isCategory(category)) notFound();
   const posts = await getPostsByCategory(locale, category);
   const cat = CATEGORIES[category];
   return (

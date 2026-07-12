@@ -2,21 +2,20 @@ import { notFound } from 'next/navigation';
 import { Header } from '@/components/Header';
 import { Footer } from '@/components/Footer';
 import { LOCALES, isLocale } from '@/lib/i18n';
-import type { Locale } from '@/lib/types';
 
 export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
 
-export default function LocaleLayout({
+export default async function LocaleLayout({
   children,
   params,
 }: {
   children: React.ReactNode;
-  params?: { locale?: string };
+  params: Promise<{ locale: string }>;
 }) {
-  if (!params || !params.locale || !isLocale(params.locale)) notFound();
-  const locale = params.locale as Locale;
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
   const currentPath = `/${locale}`;
   return (
     <>

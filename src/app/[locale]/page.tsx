@@ -18,9 +18,9 @@ export function generateStaticParams() {
   return LOCALES.map((locale) => ({ locale }));
 }
 
-export default async function HomePage({ params }: { params: { locale: string } }) {
-  if (!isLocale(params.locale)) notFound();
-  const locale = params.locale as Locale;
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  if (!isLocale(locale)) notFound();
   const [featured, posts] = await Promise.all([getFeatured(locale), getAllPostsMeta(locale)]);
   const recent = posts.filter((p) => !p.featured).slice(0, 6);
   const cats = categoryList();

@@ -16,21 +16,22 @@ export async function generateStaticParams() {
   return results;
 }
 
-export async function generateMetadata({ params }: { params: { locale: string; tag: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; tag: string }> }): Promise<Metadata> {
+  const { locale, tag } = await params;
   return {
-    title: `#${params.tag}`,
-    description: `包含标签 "${params.tag}" 的所有文章`,
-    alternates: { canonical: `https://ziqia.cc/${params.locale}/tags/${params.tag}/` },
+    title: `#${tag}`,
+    description: `包含标签 "${tag}" 的所有文章`,
+    alternates: { canonical: `https://ziqia.cc/${locale}/tags/${tag}/` },
   };
 }
 
-export default async function TagPage({ params }: { params: { locale: string; tag: string } }) {
-  if (!isLocale(params.locale)) notFound();
-  const locale = params.locale as Locale;
-  const posts = await getPostsByTag(locale, params.tag);
+export default async function TagPage({ params }: { params: Promise<{ locale: string; tag: string }> }) {
+  const { locale, tag } = await params;
+  if (!isLocale(locale)) notFound();
+  const posts = await getPostsByTag(locale as Locale, tag);
   return (
     <div className="py-10">
-      <h1 className="mb-7 font-heading text-3xl font-bold tracking-tight">#{params.tag}</h1>
+      <h1 className="mb-7 font-heading text-3xl font-bold tracking-tight">#{tag}</h1>
       {posts.length === 0 ? (
         <p className="text-on-surface-variant">—</p>
       ) : (

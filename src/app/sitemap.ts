@@ -3,6 +3,8 @@ import { LOCALES } from '@/lib/i18n';
 import { categoryList } from '@/lib/categories';
 import { getAllPostsMeta, getAllTags } from '@/lib/posts';
 
+export const dynamic = 'force-static';
+
 const SITE_BASE = 'https://ziqia.cc';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

@@ -20,11 +20,12 @@ export async function generateStaticParams() {
   return results;
 }
 
-export async function generateMetadata({ params }: { params: { locale: string; slug: string } }): Promise<Metadata> {
-  if (!isLocale(params.locale)) return {};
-  const post = await getPost(params.locale as Locale, params.slug);
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params;
+  if (!isLocale(locale)) return {};
+  const post = await getPost(locale as Locale, slug);
   if (!post) return {};
-  const url = `https://ziqia.cc/${params.locale}/posts/${post.slug}/`;
+  const url = `https://ziqia.cc/${locale}/posts/${post.slug}/`;
   return {
     title: post.title,
     description: post.excerpt,
@@ -41,10 +42,10 @@ export async function generateMetadata({ params }: { params: { locale: string; s
   };
 }
 
-export default async function PostPage({ params }: { params: { locale: string; slug: string } }) {
-  if (!isLocale(params.locale)) notFound();
-  const locale = params.locale as Locale;
-  const post = await getPost(locale, params.slug);
+export default async function PostPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
+  const { locale, slug } = await params;
+  if (!isLocale(locale)) notFound();
+  const post = await getPost(locale as Locale, slug);
   if (!post) notFound();
   const cat = CATEGORIES[post.category];
   const toc = extractToc(post.content);
