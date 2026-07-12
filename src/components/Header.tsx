@@ -13,9 +13,9 @@ const NAV: { key: 'articles' | 'categories' | 'tags' | 'about'; path: string }[]
 export function SealLogo() {
   return (
     <svg width="28" height="28" viewBox="0 0 28 28" className="flex-shrink-0">
-      <circle cx="14" cy="14" r="12.5" fill="none" stroke="#C62828" strokeWidth="1.5" />
-      <circle cx="14" cy="14" r="10" fill="none" stroke="#C62828" strokeWidth="0.5" opacity="0.4" />
-      <text x="14" y="19" textAnchor="middle" fontSize="14" fontWeight="bold" fill="#C62828" fontFamily="serif">洽</text>
+      <circle cx="14" cy="14" r="12.5" fill="none" className="stroke-google-blue-cta" strokeWidth="1.5" />
+      <circle cx="14" cy="14" r="10" fill="none" className="stroke-google-blue-cta" strokeWidth="0.5" opacity="0.4" />
+      <text x="14" y="19" textAnchor="middle" fontSize="14" fontWeight="bold" className="fill-google-blue-cta" fontFamily="serif">洽</text>
     </svg>
   );
 }
