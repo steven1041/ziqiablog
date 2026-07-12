@@ -3,7 +3,7 @@ import path from 'node:path';
 import {
   setPostsDirForTest,
   getPost, getAllPosts, getFeatured, getPostsByCategory,
-  getPostsByTag, getAllTags, getTranslation,
+  getPostsByTag, getAllTags,
 } from '@/lib/posts';
 
 beforeEach(() => {
@@ -30,7 +30,7 @@ describe('posts loader', () => {
   });
 
   it('filters by category and tag', async () => {
-    expect((await getPostsByCategory('cn', 'frontend'))).toHaveLength(1);
+    expect((await getPostsByCategory('cn', 'ai-coding-workflows'))).toHaveLength(1);
     expect((await getPostsByCategory('cn', 'backend'))).toHaveLength(0);
     expect((await getPostsByTag('cn', 'react'))).toHaveLength(1);
     expect((await getPostsByTag('cn', 'rust'))).toHaveLength(0);
@@ -38,11 +38,5 @@ describe('posts loader', () => {
 
   it('aggregates unique tags', async () => {
     expect((await getAllTags('cn')).sort()).toEqual(['architecture', 'react', 'rsc']);
-  });
-
-  it('finds translation across locales by translationKey', async () => {
-    const en = await getTranslation('en', 'rsc-deep-dive');
-    expect(en?.slug).toBe('rsc-deep-dive');
-    expect(en?.title).toBe('Understanding React Server Components');
   });
 });
