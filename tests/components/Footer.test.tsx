@@ -3,9 +3,9 @@ import { render, screen } from '@testing-library/react';
 import { Footer } from '@/components/Footer';
 
 describe('Footer', () => {
-  it('renders ziqia.cc copyright', () => {
+  it('renders ZiQia.cc copyright', () => {
     render(<Footer />);
-    expect(screen.getByText(/© \d{4} ziqia\.cc/)).toBeInTheDocument();
+    expect(screen.getByText(/© \d{4} ZiQia\.cc/)).toBeInTheDocument();
   });
 
   it('does not render any social links', () => {

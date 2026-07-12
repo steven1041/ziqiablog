@@ -4,11 +4,11 @@ import '@/styles/globals.css';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ziqia.cc'),
-  title: { default: 'ziqia.cc — AI 开发技术博客', template: '%s — ziqia.cc' },
+  title: { default: 'ZiQia.cc — AI 开发技术博客', template: '%s — ZiQia.cc' },
   description: '关于提示工程、AI 编码工作流、工具生态等 AI 开发技术文章',
   openGraph: {
     type: 'website',
-    siteName: 'ziqia.cc',
+    siteName: 'ZiQia.cc',
     locale: 'zh_CN',
     url: 'https://ziqia.cc',
   },

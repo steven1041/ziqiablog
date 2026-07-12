@@ -3,9 +3,9 @@ import { render, screen } from '@testing-library/react';
 import { Header } from '@/components/Header';
 
 describe('Header', () => {
-  it('renders ziqia.cc brand', () => {
+  it('renders ZiQia.cc brand', () => {
     render(<Header locale="cn" currentPath="/cn" />);
-    expect(screen.getByText('ziqia.cc')).toBeInTheDocument();
+    expect(screen.getByText('ZiQia.cc')).toBeInTheDocument();
   });
 
   it('does not render language switch', () => {

@@ -16,9 +16,9 @@ describe('HeroCard', () => {
     expect(screen.getByText('理解所有权。')).toBeInTheDocument();
   });
 
-  it('renders ziqia.cc brand and Z avatar', () => {
+  it('renders ZiQia.cc brand and Z avatar', () => {
     render(<HeroCard post={sample} locale="cn" />);
-    expect(screen.getByText('ziqia.cc')).toBeInTheDocument();
+    expect(screen.getByText('ZiQia.cc')).toBeInTheDocument();
     expect(screen.getByText('Z')).toBeInTheDocument();
   });
 });

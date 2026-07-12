@@ -73,8 +73,8 @@ export default async function PostPage({ params }: { params: { locale: string; s
             datePublished: post.date,
             description: post.excerpt,
             url: `https://ziqia.cc/${locale}/posts/${post.slug}/`,
-            author: { '@type': 'Organization', name: 'ziqia.cc' },
-            publisher: { '@type': 'Organization', name: 'ziqia.cc' },
+            author: { '@type': 'Organization', name: 'ZiQia.cc' },
+            publisher: { '@type': 'Organization', name: 'ZiQia.cc' },
           }),
         }}
       />
@@ -85,7 +85,7 @@ export default async function PostPage({ params }: { params: { locale: string; s
             <h1 className="mt-4 font-heading text-3xl font-bold leading-tight tracking-tight md:text-4xl">{post.title}</h1>
             <div className="mt-3 flex items-center gap-3 text-sm text-on-surface-variant">
               <span className="grid h-9 w-9 place-items-center rounded-full font-bold text-white" style={{ background: `linear-gradient(135deg, ${cat.color}, #34A853)` }}>Z</span>
-              <span>ziqia.cc · {post.date} · {tf(locale,'reading_time')(post.readingTime)}</span>
+              <span>ZiQia.cc · {post.date} · {tf(locale,'reading_time')(post.readingTime)}</span>
             </div>
           </div>
           <div className="prose prose-neutral max-w-none dark:prose-invert">

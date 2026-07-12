@@ -1,4 +1,4 @@
-# ziqia.cc — AI 开发技术博客
+# ZiQia.cc — AI 开发技术博客
 
 单语言（中文）个人 AI 开发技术博客，使用 Next.js 14 + MDX 构建，静态导出并部署到 Cloudflare Pages。
 

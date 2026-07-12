@@ -21,7 +21,7 @@ export function Header({ locale, currentPath }: { locale: Locale; currentPath: s
             <span key={c} className="h-2 w-2 rounded-full" style={{ background: c }} />
           ))}
         </span>
-        <span className="font-heading text-xl font-bold tracking-tight text-google-blue-cta">ziqia.cc</span>
+        <span className="font-heading text-xl font-bold tracking-tight text-google-blue-cta">ZiQia.cc</span>
       </Link>
       <nav className="hidden gap-1 md:flex">
         {NAV.map((item) => {

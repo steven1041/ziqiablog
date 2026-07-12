@@ -9,7 +9,7 @@ import { CategoryIcon } from '@/components/CategoryIcon';
 import type { Locale } from '@/lib/types';
 
 export const metadata: Metadata = {
-  title: 'ziqia.cc — AI 开发技术博客',
+  title: 'ZiQia.cc — AI 开发技术博客',
   description: '关于提示工程、AI 编码工作流、工具生态等 AI 开发技术文章',
   alternates: { canonical: 'https://ziqia.cc/cn/' },
 };

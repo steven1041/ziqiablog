@@ -7,7 +7,7 @@ import type { Locale } from '@/lib/types';
 
 export const metadata: Metadata = {
   title: '关于',
-  description: '关于 ziqia.cc 博客',
+  description: '关于 ZiQia.cc 博客',
   alternates: { canonical: 'https://ziqia.cc/cn/about/' },
 };
 
