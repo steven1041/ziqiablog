@@ -5,7 +5,7 @@ translationKey: rsc-deep-dive
 date: 2024-12-01
 category: ai-coding-workflows
 tags: [react, rsc, architecture]
-featured: false
+featured: true
 excerpt: 从原理到实践，探索 RSC 如何重塑前端数据流与组件边界。代码背后，是对简洁与优雅的坚持。
 coverAlt: React Server Components 示意图
 ---
@@ -14,7 +14,7 @@ coverAlt: React Server Components 示意图
 
 React Server Components（RSC）是 React 的全新架构。
 
-```typescript
+```ts
 async function Posts() {
   const posts = await db.query('posts');
   return <ul>{posts.map((p) => <li key={p.id}>{p.title}</li>)}</ul>;
