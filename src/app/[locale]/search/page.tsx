@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { isLocale } from '@/lib/i18n';
-import { SearchBox } from '@/components/SearchBox';
 import { Suspense } from 'react';
+import { SearchBoxClient } from './SearchBoxClient';
 
 export const metadata: Metadata = {
   title: '搜索',
@@ -16,7 +16,7 @@ export default async function SearchPage({ params }: { params: Promise<{ locale:
   if (!isLocale(locale)) notFound();
   return (
     <Suspense fallback={<div className="py-12 text-center text-on-surface-variant">Loading…</div>}>
-      <SearchBox locale={locale} />
+      <SearchBoxClient locale={locale} />
     </Suspense>
   );
 }
