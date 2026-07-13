@@ -32,8 +32,8 @@
     </a>
     <nav class="header-nav">
       <a href="{{ get_url(path='/' ~ page_lang ~ '/') }}" {% if cur == get_url(path='/' ~ page_lang ~ '/') %}class="active"{% endif %}>{{ trans(key="home", lang=page_lang) }}</a>
-      <a href="{{ get_url(path='/' ~ page_lang ~ '/categories/') }}" {% if cur is containing('/categories/') %}class="active"{% endif %}>{{ trans(key="categories", lang=page_lang) }}</a>
-      <a href="{{ get_url(path='/' ~ page_lang ~ '/tags/') }}" {% if cur is containing('/tags/') %}class="active"{% endif %}>{{ trans(key="tags", lang=page_lang) }}</a>
+      <a href="{% if page_lang == 'cn' %}{{ get_url(path='/categories/') }}{% else %}{{ get_url(path='/' ~ page_lang ~ '/categories/') }}{% endif %}" {% if cur is containing('/categories/') %}class="active"{% endif %}>{{ trans(key="categories", lang=page_lang) }}</a>
+      <a href="{% if page_lang == 'cn' %}{{ get_url(path='/tags/') }}{% else %}{{ get_url(path='/' ~ page_lang ~ '/tags/') }}{% endif %}" {% if cur is containing('/tags/') %}class="active"{% endif %}>{{ trans(key="tags", lang=page_lang) }}</a>
       <a href="{{ get_url(path='/' ~ page_lang ~ '/about/') }}" {% if cur is containing('/about/') %}class="active"{% endif %}>{{ trans(key="about", lang=page_lang) }}</a>
     </nav>
     <div class="header-actions">
