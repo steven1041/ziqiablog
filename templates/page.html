@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }} — {{ config.title }}{% endblock title %}
+{% block description %}{{ page.description }}{% endblock description %}
+
+{% block content %}
+<div class="prose" style="max-width: 42rem; margin: 0 auto; padding: 2rem 0;">
+  {{ page.content | safe }}
+</div>
+{% endblock content %}

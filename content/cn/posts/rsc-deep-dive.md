@@ -3,6 +3,7 @@ title = "深入理解 React Server Components"
 slug = "rsc-deep-dive"
 description = "从原理到实践，探索 RSC 如何重塑前端数据流与组件边界。代码背后，是对简洁与优雅的坚持。"
 date = 2024-12-01
+template = "post.html"
 [taxonomies]
 categories = ["ai-coding-workflows"]
 tags = ["react", "rsc", "architecture"]

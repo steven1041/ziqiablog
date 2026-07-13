@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }} — {{ config.title }}{% endblock title %}
+{% block description %}{{ page.description }}{% endblock description %}
+
+{% block extra_head %}
+{% set adsense_id = get_env(name="ADSENSE_CLIENT_ID", default="") %}
+{% if adsense_id %}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ adsense_id }}" crossorigin="anonymous"></script>
+{% endif %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ page.title }}",
+  "datePublished": "{{ page.date }}",
+  "description": "{{ page.description }}",
+  "url": "{{ page.permalink | safe }}",
+  "author": { "@type": "Organization", "name": "ZiQia.cc" },
+  "publisher": { "@type": "Organization", "name": "ZiQia.cc" }
+}
+</script>
+{% endblock extra_head %}
+
+{% block content %}
+<div class="post-layout">
+  <article>
+    <div class="post-header">
+      {% if page.taxonomies.categories %}
+      {% set cat = page.taxonomies.categories[0] %}
+      <span class="post-cat" style="background: #E8F0FE; color: #4285F4">{{ cat }}</span>
+      {% endif %}
+      <h1>{{ page.title }}</h1>
+      <div class="post-meta">
+        <span class="post-avatar" style="background: linear-gradient(135deg, #4285F4, #34A853)">Z</span>
+        <span>ZiQia.cc · {{ page.date }} · {{ trans(key="reading_time", lang=lang) | replace(from="{n}", to=page.reading_time ~ "") }}</span>
+      </div>
+    </div>
+    <div class="prose">
+      {{ page.content | safe }}
+    </div>
+    <nav class="post-nav">
+      {% if page.lower %}
+      <a href="{{ page.lower.permalink }}">
+        <div class="nav-label">{{ trans(key="previous", lang=lang) }}</div>
+        <div class="nav-title">{{ page.lower.title }}</div>
+      </a>
+      {% else %}
+      <div></div>
+      {% endif %}
+      {% if page.higher %}
+      <a href="{{ page.higher.permalink }}" style="text-align:right">
+        <div class="nav-label">{{ trans(key="next", lang=lang) }}</div>
+        <div class="nav-title">{{ page.higher.title }}</div>
+      </a>
+      {% else %}
+      <div></div>
+      {% endif %}
+    </nav>
+  </article>
+  <aside class="toc-sidebar">
+    {% if page.toc %}
+    <div class="toc-label">{{ trans(key="table_of_contents", lang=lang) }}</div>
+    <nav>
+      {% for h2 in page.toc %}
+      <a href="{{ h2.permalink | safe }}" class="{% if h2.children %}level-2{% endif %}">{{ h2.title }}</a>
+      {% for h3 in h2.children %}
+      <a href="{{ h3.permalink | safe }}" class="level-3">{{ h3.title }}</a>
+      {% endfor %}
+      {% endfor %}
+    </nav>
+    {% endif %}
+  </aside>
+</div>
+{% endblock content %}

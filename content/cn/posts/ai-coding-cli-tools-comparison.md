@@ -3,6 +3,7 @@ title = "五大 AI 编程 CLI 工具横评：OpenCode、Claude Code、Codex CLI 
 slug = "ai-coding-cli-tools-comparison"
 description = "横向对比五大 AI 编程命令行工具的核心能力、优劣势与适用场景，帮你做出最适合自己的选择。"
 date = 2026-07-13
+template = "post.html"
 [taxonomies]
 categories = ["tooling"]
 tags = ["AI编程", "CLI工具", "工具对比", "OpenCode", "Claude Code"]

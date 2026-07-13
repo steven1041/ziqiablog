@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28">
+  <circle cx="14" cy="14" r="12.5" fill="none" stroke="#1A73E8" stroke-width="1.5" />
+  <circle cx="14" cy="14" r="10" fill="none" stroke="#1A73E8" stroke-width="0.5" opacity="0.4" />
+  <text x="14" y="19" text-anchor="middle" font-size="14" font-weight="bold" fill="#1A73E8" font-family="serif">洽</text>
+</svg>

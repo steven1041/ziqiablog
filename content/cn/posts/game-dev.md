@@ -3,6 +3,7 @@ title = "游戏开发测试"
 slug = "gamedevtest"
 description = "游戏开发测试游戏开发测试游戏开发测试游戏开发测试"
 date = 2024-11-01
+template = "post.html"
 [taxonomies]
 categories = ["real-world"]
 tags = ["game", "dev"]

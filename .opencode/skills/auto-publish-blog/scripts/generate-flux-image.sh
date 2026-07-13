@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # 用法: generate-flux-image.sh "<prompt>" "<output-path>"
-# 依赖: CLOUDFLARE_ACCOUNT_ID, CLOUDFLARE_API_TOKEN 环境变量
+# 密钥自动从 ~/.zshrc / ~/.bashrc / ~/.cloudflare-creds 读取
 
 if [ $# -lt 2 ]; then
   echo "用法: $0 <prompt> <output-path>" >&2
@@ -12,17 +12,28 @@ fi
 PROMPT="$1"
 OUTPUT="$2"
 
+# 自动从常见配置文件加载 Cloudflare 密钥
+_load_creds() {
+  for src in "$HOME/.cloudflare-creds" "$HOME/.zshrc" "$HOME/.bashrc"; do
+    if [ -f "$src" ]; then
+      eval "$(grep -E '^export CLOUDFLARE_(ACCOUNT_ID|API_TOKEN)=' "$src" 2>/dev/null || true)"
+    fi
+  done
+}
+
+if [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ] || [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
+  _load_creds
+fi
+
 if [ -z "${CLOUDFLARE_ACCOUNT_ID:-}" ]; then
-  echo "错误: 未设置 CLOUDFLARE_ACCOUNT_ID 环境变量" >&2
+  echo "错误: 未设置 CLOUDFLARE_ACCOUNT_ID，请在 ~/.zshrc 或 ~/.bashrc 中配置" >&2
   exit 1
 fi
 
 if [ -z "${CLOUDFLARE_API_TOKEN:-}" ]; then
-  echo "错误: 未设置 CLOUDFLARE_API_TOKEN 环境变量" >&2
+  echo "错误: 未设置 CLOUDFLARE_API_TOKEN，请在 ~/.zshrc 或 ~/.bashrc 中配置" >&2
   exit 1
 fi
-
-API_URL="https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/ai/run/@cf/black-forest-labs/flux-1-schnell"
 
 echo "正在生成图片..."
 echo "Prompt: ${PROMPT}"
@@ -30,43 +41,53 @@ echo "Prompt: ${PROMPT}"
 # 确保输出目录存在
 mkdir -p "$(dirname "${OUTPUT}")"
 
-TMPFILE="${OUTPUT}.tmp"
+export PROMPT OUTPUT
 
-BODY=$(jq -nc --arg p "$PROMPT" '{prompt: $p, num_steps: 4}')
+python3 -c "
+import json, urllib.request, base64, sys, os
 
-HTTP_CODE=$(curl -s -o "${TMPFILE}" -w "%{http_code}" \
-  -X POST "${API_URL}" \
-  -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-  -H "Content-Type: application/json" \
-  -d "${BODY}")
+prompt = os.environ['PROMPT']
+api_url = f\"https://api.cloudflare.com/client/v4/accounts/{os.environ['CLOUDFLARE_ACCOUNT_ID']}/ai/run/@cf/black-forest-labs/flux-1-schnell\"
+token = os.environ['CLOUDFLARE_API_TOKEN']
+output = os.environ['OUTPUT']
 
-if [ "${HTTP_CODE}" != "200" ]; then
-  echo "错误: API 返回状态码 ${HTTP_CODE}" >&2
-  if [ -f "${TMPFILE}" ]; then
-    head -c 500 "${TMPFILE}" >&2
-    echo >&2
-    rm -f "${TMPFILE}"
-  fi
-  exit 1
-fi
+width = int(os.environ.get('FLUX_WIDTH', '1024'))
+height = int(os.environ.get('FLUX_HEIGHT', '576'))
+body = json.dumps({'prompt': prompt, 'num_steps': 4, 'width': width, 'height': height}).encode()
 
-# 检查响应是否为 JSON 错误（首字符是 {）
-FIRST_BYTE=$(head -c 1 "${TMPFILE}")
-if [ "${FIRST_BYTE}" = "{" ]; then
-  echo "错误: API 返回 JSON 错误" >&2
-  head -c 500 "${TMPFILE}" >&2
-  echo >&2
-  rm -f "${TMPFILE}"
-  exit 1
-fi
+req = urllib.request.Request(api_url, data=body, method='POST')
+req.add_header('Authorization', f'Bearer {token}')
+req.add_header('Content-Type', 'application/json')
 
-# 检查文件是否有效
-FILE_SIZE=$(stat -c%s "${TMPFILE}" 2>/dev/null || echo 0)
-if [ "${FILE_SIZE}" -lt 1000 ]; then
-  echo "警告: 生成的文件过小 (${FILE_SIZE} bytes)，可能不是有效图片" >&2
-  rm -f "${TMPFILE}"
-  exit 1
-fi
+try:
+    resp = urllib.request.urlopen(req)
+    data = resp.read()
+except urllib.error.HTTPError as e:
+    print(f'API 错误: HTTP {e.code} {e.reason}', file=sys.stderr)
+    print(e.read()[:500], file=sys.stderr)
+    sys.exit(1)
 
-mv "${TMPFILE}" "${OUTPUT}"
-echo "图片已保存到: ${OUTPUT} (${FILE_SIZE} bytes)"
+# 尝试解析 JSON 响应（FLUX 返回 JSON，内含 base64 图片数据）
+try:
+    result = json.loads(data)
+    if 'result' in result and 'image' in result['result']:
+        img_bytes = base64.b64decode(result['result']['image'])
+    elif 'result' in result:
+        print(f'API 返回 JSON 但格式不符: {json.dumps(result, ensure_ascii=False)[:300]}', file=sys.stderr)
+        sys.exit(1)
+    else:
+        print(f'API 返回异常 JSON: {json.dumps(result, ensure_ascii=False)[:300]}', file=sys.stderr)
+        sys.exit(1)
+except (json.JSONDecodeError, UnicodeDecodeError):
+    # 非 JSON 响应，可能是直接二进制图片
+    img_bytes = data
+
+if len(img_bytes) < 1000:
+    print(f'警告: 生成的图片过小 ({len(img_bytes)} bytes)', file=sys.stderr)
+    sys.exit(1)
+
+with open(output, 'wb') as f:
+    f.write(img_bytes)
+
+print(f'图片已保存到: {output} ({len(img_bytes)} bytes)')
+"

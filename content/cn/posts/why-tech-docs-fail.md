@@ -3,6 +3,7 @@ title = "为什么看完技术文档还是不会用？"
 slug = "why-tech-docs-fail"
 description = "官方文档按\"有什么\"组织，你的问题却是\"我要做什么\"——这种结构错位是技术文档最大的痛点。"
 date = 2026-07-13
+template = "post.html"
 [taxonomies]
 categories = ["tooling"]
 tags = ["documentation", "claude-code", "learning", "dx"]
