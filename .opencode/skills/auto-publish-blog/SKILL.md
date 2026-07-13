@@ -97,6 +97,11 @@ Slug: [slug]
 
 扫描文章内容，识别适合插图的位置（技术概念、架构对比、流程说明等）。每个位置判断适合图表还是配图：
 
+**生成封面图（FLUX）：**
+- 首先从文章主题生成一张封面概念图
+- 使用 scripts/generate-flux-image.sh，输出到 public/images/posts/{slug}/cover.png
+- 从 prompt 生成 coverAlt 文本
+
 **技术图表（Mermaid）：**
 - 适用场景：架构图、流程图、时序图、数据流
 - 使用 LLM 生成 Mermaid 代码，然后通过 bash 渲染为 SVG
@@ -132,9 +137,11 @@ excerpt: 50字左右的中文摘要
 coverAlt: 封面图的alt文本
 ---
 
-<img src="/images/posts/{slug}/diagram-1.svg" alt="xxx示意图" />
+<img src="/images/posts/{slug}/cover.png" alt="{coverAlt文本}" />
 
-正文内容（Markdown 格式）...
+正文内容...
+
+<img src="/images/posts/{slug}/diagram-1.svg" alt="xxx示意图" />
 
 <img src="/images/posts/{slug}/illustration-1.png" alt="xxx概念图" />
 

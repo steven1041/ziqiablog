@@ -32,11 +32,13 @@ mkdir -p "$(dirname "${OUTPUT}")"
 
 TMPFILE="${OUTPUT}.tmp"
 
+BODY=$(jq -nc --arg p "$PROMPT" '{prompt: $p, num_steps: 4}')
+
 HTTP_CODE=$(curl -s -o "${TMPFILE}" -w "%{http_code}" \
   -X POST "${API_URL}" \
   -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d "{\"prompt\": \"${PROMPT}\", \"num_steps\": 4}")
+  -d "${BODY}")
 
 if [ "${HTTP_CODE}" != "200" ]; then
   echo "错误: API 返回状态码 ${HTTP_CODE}" >&2
