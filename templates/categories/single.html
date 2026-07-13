@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}{{ term.name }} — {{ config.title }}{% endblock title %}
+{% block description %}{{ term.name }} {{ trans(key="categories", lang=lang) }}{% endblock description %}
+
+{% block content %}
+<h1 class="page-heading">{{ term.name }}</h1>
+{% if term.pages %}
+<div class="grid md:grid-cols-2 lg:grid-cols-3">
+  {% for post in term.pages %}
+  <article class="article-card">
+    <a href="{{ post.permalink }}">
+      <div class="card-visual" style="background: linear-gradient(135deg, #E8F0FE 0%, #4285F4 100%)">
+        <span class="card-cat">{{ term.name }}</span>
+      </div>
+      <div class="card-body">
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.description }}</p>
+        <div class="card-footer">
+          <span>{{ post.date }} · {{ trans(key="reading_time", lang=lang) | replace(from="{n}", to=post.reading_time ~ "") }}</span>
+          <span class="read-more">{{ trans(key="read_more", lang=lang) }} →</span>
+        </div>
+      </div>
+    </a>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<p style="color: rgb(var(--on-surface-variant))">—</p>
+{% endif %}
+{% endblock content %}
