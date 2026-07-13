@@ -1,49 +1,37 @@
 # ZiQia.cc — AI 开发技术博客
 
-单语言（中文）个人 AI 开发技术博客，使用 Next.js 14 + MDX 构建，静态导出并部署到 Cloudflare Pages。
+个人 AI 开发技术博客（中文 + English），使用 Zola（Rust 静态站点生成器）构建，部署到 Cloudflare Pages。
 
-## 主题
+## 技术栈
 
-- 提示工程 (Prompt Engineering)
-- AI 编码工作流 (AI Coding Workflows)
-- 工具生态 (Tooling & Integration)
-- 质量保障 (Quality & Review)
-- 成本与效率 (Cost & Efficiency)
-- 项目实践 (Real-World Practices)
-- 安全与合规 (Security & Compliance)
-- 团队协作 (Team Collaboration)
-- 业界新闻 (AI News)
+- **框架**: [Zola](https://www.getzola.org/) 纯静态站点生成器
+- **模板**: Tera（手写）
+- **样式**: 手写 CSS（无框架依赖）
+- **代码高亮**: Zola 内置 syntect
+- **搜索**: Pagefind
+- **部署**: Cloudflare Pages
+- **暗色模式**: CSS `prefers-color-scheme`
 
 ## 开发
 
 ```bash
-npm install
-npm run dev     # http://localhost:3000 → /cn
+# 安装 Zola（一次）
+# 参见 https://www.getzola.org/documentation/getting-started/installation/
+
+# 本地开发
+zola serve
+
+# 构建
+zola build              # 输出到 public/
+npx pagefind --site public  # 搜索索引
 ```
 
-## 构建
-
-```bash
-npm run build   # next build + rss + pagefind
-```
-
-输出：`out/`
-
-## 测试
-
-```bash
-npm test
-```
+输出：`public/`
 
 ## 部署到 Cloudflare Pages
 
 1. 在 Cloudflare Pages 创建新项目并连接本仓库
-2. 构建命令：`npm run build`
-3. 输出目录：`out`
-4. 环境：Node 20
-5. 环境变量（可选）：
-   - `NEXT_PUBLIC_ADSENSE_CLIENT_ID`：Google AdSense 客户端 ID（不设置则不渲染广告脚本）
-
-## 字体
-
-构建使用 system-ui 字体栈避免静态导出的网络依赖。如需切换到 Google Fonts（Inter / Roboto / Noto Sans SC），修改 `src/app/layout.tsx`、`src/styles/globals.css` 和 `tailwind.config.ts`。
+2. 构建命令：`zola build && npx pagefind --site public`
+3. 输出目录：`public`
+4. 环境变量（可选）：
+   - `ADSENSE_CLIENT_ID`：Google AdSense 客户端 ID（不设置则不渲染广告脚本）
