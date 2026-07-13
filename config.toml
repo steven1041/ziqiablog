@@ -2,7 +2,6 @@ base_url = "https://ziqia.cc"
 default_language = "cn"
 title = "ZiQia.cc — AI 开发技术博客"
 description = "关于提示工程、AI 编码工作流、工具生态等 AI 开发技术文章"
-author = "ZiQia.cc"
 generate_feeds = true
 generate_sitemap = true
 build_search_index = false
