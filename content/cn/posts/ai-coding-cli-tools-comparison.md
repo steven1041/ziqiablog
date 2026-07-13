@@ -6,7 +6,6 @@ date = 2026-07-13
 template = "post.html"
 [taxonomies]
 categories = ["ai-dev-experience"]
-tags = ["AI编程", "CLI工具", "工具对比", "OpenCode", "Claude Code"]
 [extra]
 translation_key = "ai-coding-cli-tools-comparison"
 featured = false

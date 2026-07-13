@@ -7,8 +7,7 @@ generate_sitemap = true
 build_search_index = false
 
 taxonomies = [
-  { name = "categories", feed = false },
-  { name = "tags", feed = false },
+  { name = "categories", feed = false, render = false },
 ]
 
 [markdown]

@@ -6,7 +6,6 @@ date = 2026-07-13
 template = "post.html"
 [taxonomies]
 categories = ["ai-dev-experience"]
-tags = ["技术文档", "Claude Code", "学习方法", "AI工具"]
 [extra]
 translation_key = "du-wan-wen-dang-bu-hui-yong"
 featured = false

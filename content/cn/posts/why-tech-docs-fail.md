@@ -6,7 +6,6 @@ date = 2026-07-13
 template = "post.html"
 [taxonomies]
 categories = ["ai-opinions"]
-tags = ["documentation", "claude-code", "learning", "dx"]
 [extra]
 translation_key = "why-tech-docs-fail"
 featured = true

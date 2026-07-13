@@ -6,7 +6,6 @@ date = 2024-12-01
 template = "post.html"
 [taxonomies]
 categories = ["ai-dev-experience"]
-tags = ["react", "rsc", "architecture"]
 [extra]
 translation_key = "rsc-deep-dive"
 featured = true

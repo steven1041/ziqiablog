@@ -6,7 +6,6 @@ date = 2024-11-01
 template = "post.html"
 [taxonomies]
 categories = ["ai-dev-experience"]
-tags = ["rust", "memory"]
 [extra]
 translation_key = "rust-memory"
 featured = false

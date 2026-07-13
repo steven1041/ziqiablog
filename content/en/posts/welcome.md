@@ -6,7 +6,6 @@ date = 2024-01-01
 template = "post.html"
 [taxonomies]
 categories = ["ai-dev-experience"]
-tags = ["welcome"]
 [extra]
 translation_key = "welcome"
 featured = false

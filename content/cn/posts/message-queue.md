@@ -6,7 +6,6 @@ date = 2024-10-01
 template = "post.html"
 [taxonomies]
 categories = ["ai-dev-experience"]
-tags = ["queue", "distributed"]
 [extra]
 translation_key = "message-queue"
 featured = false
