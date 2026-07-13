@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }} — {{ site_title }}{% endblock title %}
+{% block description %}{{ page.description }}{% endblock description %}
+
+{% block content %}
+{% set posts_section = get_section(path=page_lang ~ "/posts/_index.md") %}
+{% set cat_slug = page.components | last %}
+{% set cat_name = page.title %}
+
+<h1 class="page-heading">{{ cat_name }}</h1>
+
+{% set cat_posts = [] %}
+{% for post in posts_section.pages %}
+  {% if post.taxonomies.categories is containing(cat_slug) %}
+    {% set_global cat_posts = cat_posts | concat(with=[post]) %}
+  {% endif %}
+{% endfor %}
+
+{% if cat_posts | length > 0 %}
+<div class="grid md:grid-cols-2 lg:grid-cols-3">
+  {% for post in cat_posts %}
+  <article class="article-card">
+    <a href="{{ post.permalink }}">
+      <div class="card-visual" style="background: linear-gradient(135deg, #E8F0FE 0%, #4285F4 100%)">
+        <span class="card-cat">{{ cat_name }}</span>
+      </div>
+      <div class="card-body">
+        <h3>{{ post.title }}</h3>
+        <p>{{ post.description }}</p>
+        <div class="card-footer">
+          <span>{{ post.date }} · {{ trans(key="reading_time", lang=page_lang) | replace(from="{n}", to=post.reading_time ~ "") }}</span>
+          <span class="read-more">{{ trans(key="read_more", lang=page_lang) }} →</span>
+        </div>
+      </div>
+    </a>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<p style="color: rgb(var(--on-surface-variant))">—</p>
+{% endif %}
+{% endblock content %}
