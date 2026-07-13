@@ -104,17 +104,17 @@ Slug: [slug]
 
 **技术图表（Mermaid）：**
 - 适用场景：架构图、流程图、时序图、数据流
-- 使用 LLM 生成 Mermaid 代码，然后通过 bash 渲染为 SVG
-- 命令：`npx -y @mermaid-js/mermaid-cli mmdc -i /tmp/mermaid-input.mmd -o public/images/posts/{slug}/diagram-N.svg -b white`
-- 将 Mermaid 代码写入临时文件 `/tmp/mermaid-input.mmd`，渲染后删除
+- 使用 LLM 生成 Mermaid 代码，通过 kroki.io API 渲染为 SVG（无需本地依赖）
+- 命令：`bash .opencode/skills/auto-publish-blog/scripts/generate-mermaid.sh "<mermaid-code>" "public/images/posts/{slug}/diagram-N.svg"`
+- 也可将 Mermaid 代码写入 `/tmp/mermaid-input.mmd`，然后：`bash scripts/generate-mermaid.sh /tmp/mermaid-input.mmd "public/images/posts/{slug}/diagram-N.svg"`
 - 整个渲染过程不消耗 LLM token
 
 **概念配图（FLUX）：**
 - 适用场景：封面图、抽象概念示意、主题配图
 - 使用 `scripts/generate-flux-image.sh` 脚本调用 Cloudflare API
 - 命令：`bash .opencode/skills/auto-publish-blog/scripts/generate-flux-image.sh "<英文prompt>" "public/images/posts/{slug}/illustration-N.png"`
+- 脚本会自动从 `~/.zshrc` / `~/.bashrc` 读取 `CLOUDFLARE_ACCOUNT_ID` 和 `CLOUDFLARE_API_TOKEN`
 - FLUX prompt 用英文写，详细描述画面风格、颜色、构图
-- 如果 Cloudflare API 不可用（无 CLOUDFLARE_API_TOKEN），跳过生成并告知用户
 
 **结果验证：**
 - 确认每个生成的图片文件真实存在且大小 > 0
@@ -154,13 +154,74 @@ coverAlt: 封面图的alt文本
 - 二级标题用 `##`，三级用 `###`
 - 文件名必须是 `{slug}.mdx`，不是 `{title}.mdx`
 
+### MDX 排版规范
+
+本项目使用 `next-mdx-remote/rsc` 渲染 MDX，**不支持 GFM（GitHub Flavored Markdown）表格语法**。所有 markdown 表格语法（`| col | col |`）会被当作纯文本渲染在 `<p>` 标签内，不会生成 `<table>` 元素。
+
+**必须遵守的格式规则：**
+
+1. **表格必须用 HTML**：所有表格使用 `<table>`、`<thead>`、`<tbody>`、`<tr>`、`<th>`、`<td>` 标签，不能用 markdown 管道符语法。
+
+   ```html
+   <table>
+     <thead>
+       <tr>
+         <th>列1</th>
+         <th>列2</th>
+       </tr>
+     </thead>
+     <tbody>
+       <tr>
+         <td>数据1</td>
+         <td>数据2</td>
+       </tr>
+     </tbody>
+   </table>
+   ```
+
+2. **段落之间必须空行**：每个 `<p>` 段落占据独立一行，段落之间留一个空行。不要写大段连续文字而没有断行。示例：
+
+   ```mdx
+   这是第一段，介绍背景和动机。
+
+   这是第二段，展开核心论点。用空行分隔让阅读更舒适。
+
+   第三段补充细节或例子。
+   ```
+
+3. **引用块用作摘要/关键句**：每个小节的开头或结尾用 `>` 块引用一句话提炼核心观点，增强可扫描性。
+
+   ```mdx
+   > **核心观点：用一句话概括本节最重要的结论。**
+   ```
+
+4. **大章节之间用分割线**：文章主体章节之间用 `---` 视觉分隔。
+
+5. **优缺点用无序列表**：对比分析类内容用 `-` 列表，每项尽量控制在 1-2 行。
+
+6. **代码用反引号**：工具名、命令、文件名、技术术语用 `` ` `` 包裹。
+
 ### 第五步：本地构建
+
+**前置检查：** 确保 `next.config.mjs` 中包含 `output: 'export'` 配置：
+
+```js
+const nextConfig = {
+  output: 'export',
+  trailingSlash: true,
+  // ...其他配置
+};
+```
+
+构建命令：
 
 ```bash
 npm run build
 ```
 
 工作目录：`/mnt/d/projects/html5/myblog`
+
+构建产物输出到 `out/` 目录。**注意：** `output: 'export'` 模式会清空 `out/` 目录（包括 `.git`），部署前需重新初始化 git。
 
 如果构建失败：
 - 展示错误日志
@@ -170,11 +231,13 @@ npm run build
 
 ### 第六步：部署
 
-1. 检查 `out/` 目录是否已初始化为 git 仓库：
+1. **初始化 git 仓库**（`output: 'export'` 会清空 `out/`，每次构建后需重新初始化）：
    ```bash
-   [ -d out/.git ] || git init out/
+   git init out/
+   git -C out config user.email "stone@ziqia.cc"
+   git -C out config user.name "ZiQia"
+   git -C out branch -m master main
    ```
-   如果 `out/.git` 不存在，执行 `git init out/`
 
 2. 检查是否已关联远程仓库：
    ```bash
@@ -187,17 +250,15 @@ npm run build
 
 3. 展示变更摘要：
    ```bash
-   git -C out status
-   git -C out diff --stat
+   git -C out add -A && git -C out status
    ```
 
 4. 询问用户确认："确认发布？(y/n)"
 
 5. 提交并推送：
    ```bash
-   git -C out add -A
    git -C out commit -m "feat: 添加文章《[title]》"
-   git -C out push origin main
+   git -C out push --force origin main
    ```
 
 6. 告知用户上线 URL：`https://ziqia.cc/cn/posts/{slug}/`
@@ -218,11 +279,15 @@ npm run build
 | 内容不足 200 字 | 提示用户补充，不要强行发布 |
 | slug 重复 | 自动追加 `-2`、`-3` 等后缀 |
 | 分类不在合法列表中 | 重新匹配，展示合法分类列表 |
-| Cloudflare API 无权限 | 跳过 FLUX 配图，仅保留 Mermaid 图表 |
-| Mermaid 渲染失败 | 跳过该图表，告知用户 |
+| Cloudflare API 无权限 | 提示用户在 ~/.zshrc 或 ~/.bashrc 配置 CLOUDFLARE_API_TOKEN，跳过 FLUX 配图 |
+| Mermaid 渲染失败 | 检查 Mermaid 语法，跳过该图表，告知用户 |
+| kroki.io 不可用 | 跳过该图表，告知用户 |
 | npm run build 失败 | 展示错误、修复、重试，最多 3 次 |
+| next.config.mjs 缺少 `output: 'export'` | 构建不会输出到 `out/`。检查并添加 `output: 'export'` 配置 |
 | out/ 未关联远程 | 提示用户提供 GitHub URL |
+| out/.git 被构建清空 | `output: 'export'` 会清空 `out/`，每次构建后需重新 `git init` |
 | git push 失败 | 展示错误，提示检查网络/权限 |
+| 表格未渲染（显示为纯文本） | next-mdx-remote/rsc 不支持 GFM 表格。确保使用 HTML `<table>` 标签 |
 
 ## 安全边界（严格遵守）
 
