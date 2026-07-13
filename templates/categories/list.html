@@ -5,7 +5,7 @@
 {% block content %}
 <h1 class="page-heading">{{ trans(key="categories", lang=page_lang) }}</h1>
 
-{% set all_cats = get_taxonomy(kind="categories", lang=page_lang) %}
+{% set all_cats = get_taxonomy(kind="categories") %}
 {% set defined = config.extra.categories %}
 
 <div class="cat-list">

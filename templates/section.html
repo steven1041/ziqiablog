@@ -72,7 +72,7 @@
     </div>
   </div>
   {% if config.extra.categories %}
-  {% set all_cats = get_taxonomy(kind="categories", lang=page_lang, required=false) %}
+  {% set all_cats = get_taxonomy(kind="categories", required=false) %}
   <div class="grid grid-cols-3 md:grid-cols-5 lg:grid-cols-9">
     {% for d in config.extra.categories %}
     {% set_global count = 0 %}
