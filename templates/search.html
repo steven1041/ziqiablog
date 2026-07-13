@@ -1,8 +1,29 @@
-<!DOCTYPE html>
-<html>
-<head><title>搜索 - {{ config.title }}</title></head>
-<body>
-  <h1>搜索</h1>
-  <form><input type="search" name="q" placeholder="搜索文章…"></form>
-</body>
-</html>
+{% extends "base.html" %}
+{% block title %}{{ trans(key="search", lang=lang) }} — {{ config.title }}{% endblock title %}
+{% block content %}
+<div class="search-page">
+  <input type="search" id="search-input" class="search-input" placeholder="{{ trans(key="search_placeholder", lang=lang) }}" aria-label="{{ trans(key="search", lang=lang) }}">
+  <p id="search-hint" class="search-hint">{{ trans(key="search_hint", lang=lang) }}</p>
+  <ul id="search-results" class="search-results"></ul>
+</div>
+<script>
+const searchInput = document.getElementById('search-input');
+const searchHint = document.getElementById('search-hint');
+const searchResults = document.getElementById('search-results');
+let pagefind;
+(async () => {
+  const mod = await import('/pagefind/pagefind.js');
+  if (mod && typeof mod.search === 'function') pagefind = mod;
+})();
+searchInput.addEventListener('input', async () => {
+  const q = searchInput.value.trim();
+  if (!q || !pagefind) { searchResults.innerHTML = ''; searchHint.style.display = q ? 'none' : ''; return; }
+  searchHint.style.display = 'none';
+  const { results } = await pagefind.search(q);
+  const items = await Promise.all(results.slice(0, 30).map(async r => { const d = await r.data(); return d; }));
+  const filtered = items.filter(d => d.url.startsWith('/{{ lang }}/'));
+  searchResults.innerHTML = filtered.map(d => `<li class="search-result"><a href="${d.url}"><div class="result-title">${d.meta.title}</div><div class="result-excerpt">${d.excerpt}</div></a></li>`).join('');
+  if (filtered.length === 0) searchResults.innerHTML = '<p class="search-hint">{{ trans(key="no_results", lang=lang) }}</p>';
+});
+</script>
+{% endblock content %}
