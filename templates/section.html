@@ -3,7 +3,7 @@
 {% block title %}{% if section.components | length > 1 %}{{ section.title }} — {% endif %}{{ site_title }}{% endblock title %}
 
 {% block content %}
-{% set posts_section = get_section(path="posts/_index.md", lang=page_lang) %}
+{% set posts_section = get_section(path=page_lang ~ "/posts/_index.md") %}
 {% set all_posts = posts_section.pages %}
 {% set featured = all_posts | filter(attribute="extra.featured", value=true) | first %}
 

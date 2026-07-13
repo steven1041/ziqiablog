@@ -4,6 +4,6 @@
 <div class="not-found">
   <h1>404</h1>
   <p>{{ trans(key="page_not_found", lang=page_lang) }}</p>
-  <a href="{{ get_url(path='/', lang=page_lang) }}">{{ trans(key="back_home", lang=page_lang) }} →</a>
+  <a href="{{ get_url(path='/' ~ page_lang ~ '/') }}">{{ trans(key="back_home", lang=page_lang) }} →</a>
 </div>
 {% endblock content %}
