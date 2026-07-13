@@ -81,15 +81,22 @@ static/images/posts/           # 文章配图目录（源码管理）
 - `template`：固定 `post.html`
 - `cover_alt`：从首张插图自动生成
 
-向用户展示 frontmatter 预览（以 TOML 格式）：
+向用户展示 frontmatter 预览（以 TOML 格式），包含最终写入文件的全部字段：
 ```toml
 title = "[title]"
 slug = "[slug]"
+description = "[excerpt]"
 date = YYYY-MM-DD
+template = "post.html"
+
+[taxonomies]
 categories = ["[category]"]
 tags = ["[tag1]", "[tag2]", "[tag3]"]
-description = "[excerpt]"
+
+[extra]
+translation_key = "[slug]"
 featured = [false/true]
+cover_alt = "[封面图 alt 文本]"
 ```
 
 用户确认后继续。如 slug 冲突，自动追加后缀并告知。
@@ -98,19 +105,30 @@ featured = [false/true]
 
 扫描文章内容，识别适合插图的位置（技术概念、架构对比、流程说明等）。每个位置判断适合图表还是配图：
 
+**封面图（FLUX）：**
+- 适用场景：文章封面，用于 `cover_alt` 和首页卡片展示
+- 首先生成封面图，保存在 `static/images/posts/{slug}/cover.png`
+- 使用 `scripts/generate-flux-image.sh` 脚本调用 Cloudflare API
+- 命令：`bash .opencode/skills/auto-publish-blog/scripts/generate-flux-image.sh "<英文prompt>" "static/images/posts/{slug}/cover.png"`
+- FLUX prompt 用英文写，详细描述画面风格、颜色、构图
+- 如果 Cloudflare API 不可用（无 CLOUDFLARE_API_TOKEN），跳过生成并告知用户
+- 封面图会自动作为文章正文的第一张插图
+
 **技术图表（Mermaid）：**
 - 适用场景：架构图、流程图、时序图、数据流
 - 使用 LLM 生成 Mermaid 代码，然后通过 bash 渲染为 SVG
 - 命令：`npx -y @mermaid-js/mermaid-cli mmdc -i /tmp/mermaid-input.mmd -o static/images/posts/{slug}/diagram-N.svg -b white`
 - 将 Mermaid 代码写入临时文件 `/tmp/mermaid-input.mmd`，渲染后删除
+- 在写入临时文件前添加 `trap 'rm -f /tmp/mermaid-input.mmd' EXIT` 确保总是清理
 - 整个渲染过程不消耗 LLM token
 
 **概念配图（FLUX）：**
-- 适用场景：封面图、抽象概念示意、主题配图
+- 适用场景：抽象概念示意、主题配图（非封面）
 - 使用 `scripts/generate-flux-image.sh` 脚本调用 Cloudflare API
 - 命令：`bash .opencode/skills/auto-publish-blog/scripts/generate-flux-image.sh "<英文prompt>" "static/images/posts/{slug}/illustration-N.png"`
 - FLUX prompt 用英文写，详细描述画面风格、颜色、构图
 - 如果 Cloudflare API 不可用（无 CLOUDFLARE_API_TOKEN），跳过生成并告知用户
+- 脚本使用 `jq` 安全构建 JSON（避免 prompt 中的特殊字符破坏 JSON），使用 `curl -o` 直接写入二进制文件（避免命令替换丢失 NUL 字节）
 
 **结果验证：**
 - 确认每个生成的图片文件真实存在且大小 > 0
@@ -138,9 +156,11 @@ featured = false
 cover_alt = "封面图的alt文本"
 +++
 
-![xxx示意图](/images/posts/{slug}/diagram-1.svg)
+![封面图：主题相关](/images/posts/{slug}/cover.png)
 
 正文内容（Markdown 格式）...
+
+![xxx示意图](/images/posts/{slug}/diagram-1.svg)
 
 ![xxx概念图](/images/posts/{slug}/illustration-1.png)
 
