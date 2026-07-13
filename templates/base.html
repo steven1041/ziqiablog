@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{{ config.title }}{% endblock title %}</title>
+  <meta name="description" content="{% block description %}{{ config.description }}{% endblock description %}">
+  <link rel="stylesheet" href="{{ get_url(path='style.css', cachebust=true) }}">
+  {% block extra_head %}{% endblock extra_head %}
+</head>
+<body>
+  <header class="header">
+    <a href="{{ get_url(path='/' ~ lang ~ '/') }}" class="header-logo">
+      <svg width="28" height="28" viewBox="0 0 28 28" style="flex-shrink:0">
+        <circle cx="14" cy="14" r="12.5" fill="none" stroke="#1A73E8" stroke-width="1.5"/>
+        <circle cx="14" cy="14" r="10" fill="none" stroke="#1A73E8" stroke-width="0.5" opacity="0.4"/>
+        <text x="14" y="19" text-anchor="middle" font-size="14" font-weight="bold" fill="#1A73E8" font-family="serif">洽</text>
+      </svg>
+      ZiQia.cc
+    </a>
+    <nav class="header-nav">
+      <a href="{{ get_url(path='/' ~ lang ~ '/') }}" {% if current_url and current_url == get_url(path='/' ~ lang ~ '/') %}class="active"{% endif %}>{{ trans(key="home", lang=lang) }}</a>
+      <a href="{{ get_url(path='/' ~ lang ~ '/categories/') }}" {% if current_url and current_url is containing('/categories/') %}class="active"{% endif %}>{{ trans(key="categories", lang=lang) }}</a>
+      <a href="{{ get_url(path='/' ~ lang ~ '/tags/') }}" {% if current_url and current_url is containing('/tags/') %}class="active"{% endif %}>{{ trans(key="tags", lang=lang) }}</a>
+      <a href="{{ get_url(path='/' ~ lang ~ '/about/') }}" {% if current_url and current_url is containing('/about/') %}class="active"{% endif %}>{{ trans(key="about", lang=lang) }}</a>
+    </nav>
+    <div class="header-actions">
+      <div class="lang-switch">
+        {% block lang_switch %}
+        {% if page and page.translations %}
+          {% for t in page.translations %}
+          <a href="{{ t.permalink | safe }}">{{ t.lang | upper }}</a>
+          {% endfor %}
+        {% else %}
+          {% if lang == "cn" %}
+          <a href="{{ get_url(path='/en/') }}">EN</a>
+          {% else %}
+          <a href="{{ get_url(path='/cn/') }}">中文</a>
+          {% endif %}
+        {% endif %}
+        {% endblock lang_switch %}
+      </div>
+    </div>
+  </header>
+  <main class="max-w-1280 px-5 md:px-10 py-8">
+    {% block content %}{% endblock content %}
+  </main>
+  <footer class="footer">
+    <p>&copy; {{ now() | date(format="%Y") }} ZiQia.cc</p>
+  </footer>
+</body>
+</html>
