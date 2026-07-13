@@ -1,17 +1,28 @@
+{#- Zola 0.19.2 lang 变量 bug workaround: 从路由推导当前语言 -#}
+{%- set cur = current_url | default(value="") -%}
+{%- if cur is containing("/en/") -%}
+  {%- set_global page_lang = "en" -%}
+  {%- set_global site_title = config.languages.en.title -%}
+  {%- set_global site_desc = config.languages.en.description -%}
+{%- else -%}
+  {%- set_global page_lang = "cn" -%}
+  {%- set_global site_title = config.title -%}
+  {%- set_global site_desc = config.description -%}
+{%- endif -%}
 <!DOCTYPE html>
-<html lang="{{ lang }}">
+<html lang="{{ page_lang }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}{{ config.title }}{% endblock title %}</title>
-  <meta name="description" content="{% block description %}{{ config.description }}{% endblock description %}">
+  <title>{% block title %}{{ site_title }}{% endblock title %}</title>
+  <meta name="description" content="{% block description %}{{ site_desc }}{% endblock description %}">
   <link rel="stylesheet" href="{{ get_url(path='style.css', cachebust=true) }}">
   <link rel="icon" href="{{ get_url(path='/icon.svg') }}">
   {% block extra_head %}{% endblock extra_head %}
 </head>
 <body>
   <header class="header">
-    <a href="{{ get_url(path='/' ~ lang ~ '/') }}" class="header-logo">
+    <a href="{{ get_url(path='/' ~ page_lang ~ '/') }}" class="header-logo">
       <svg width="28" height="28" viewBox="0 0 28 28" style="flex-shrink:0">
         <circle cx="14" cy="14" r="12.5" fill="none" stroke="#1A73E8" stroke-width="1.5"/>
         <circle cx="14" cy="14" r="10" fill="none" stroke="#1A73E8" stroke-width="0.5" opacity="0.4"/>
@@ -20,24 +31,18 @@
       ZiQia.cc
     </a>
     <nav class="header-nav">
-      <a href="{{ get_url(path='/' ~ lang ~ '/') }}" {% if current_url and current_url == get_url(path='/' ~ lang ~ '/') %}class="active"{% endif %}>{{ trans(key="home", lang=lang) }}</a>
-      <a href="{{ get_url(path='/' ~ lang ~ '/categories/') }}" {% if current_url and current_url is containing('/categories/') %}class="active"{% endif %}>{{ trans(key="categories", lang=lang) }}</a>
-      <a href="{{ get_url(path='/' ~ lang ~ '/tags/') }}" {% if current_url and current_url is containing('/tags/') %}class="active"{% endif %}>{{ trans(key="tags", lang=lang) }}</a>
-      <a href="{{ get_url(path='/' ~ lang ~ '/about/') }}" {% if current_url and current_url is containing('/about/') %}class="active"{% endif %}>{{ trans(key="about", lang=lang) }}</a>
+      <a href="{{ get_url(path='/' ~ page_lang ~ '/') }}" {% if cur == get_url(path='/' ~ page_lang ~ '/') %}class="active"{% endif %}>{{ trans(key="home", lang=page_lang) }}</a>
+      <a href="{{ get_url(path='/' ~ page_lang ~ '/categories/') }}" {% if cur is containing('/categories/') %}class="active"{% endif %}>{{ trans(key="categories", lang=page_lang) }}</a>
+      <a href="{{ get_url(path='/' ~ page_lang ~ '/tags/') }}" {% if cur is containing('/tags/') %}class="active"{% endif %}>{{ trans(key="tags", lang=page_lang) }}</a>
+      <a href="{{ get_url(path='/' ~ page_lang ~ '/about/') }}" {% if cur is containing('/about/') %}class="active"{% endif %}>{{ trans(key="about", lang=page_lang) }}</a>
     </nav>
     <div class="header-actions">
       <div class="lang-switch">
         {% block lang_switch %}
-        {% if page and page.translations %}
-          {% for t in page.translations %}
-          <a href="{{ t.permalink | safe }}">{{ t.lang | upper }}</a>
-          {% endfor %}
+        {% if page_lang == "cn" %}
+        <a href="{{ get_url(path='/en/') }}">EN</a>
         {% else %}
-          {% if lang == "cn" %}
-          <a href="{{ get_url(path='/en/') }}">EN</a>
-          {% else %}
-          <a href="{{ get_url(path='/cn/') }}">中文</a>
-          {% endif %}
+        <a href="{{ get_url(path='/cn/') }}">中文</a>
         {% endif %}
         {% endblock lang_switch %}
       </div>
