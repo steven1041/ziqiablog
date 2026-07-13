@@ -10,20 +10,36 @@
 const searchInput = document.getElementById('search-input');
 const searchHint = document.getElementById('search-hint');
 const searchResults = document.getElementById('search-results');
-let pagefind;
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 (async () => {
-  const mod = await import('/pagefind/pagefind.js');
-  if (mod && typeof mod.search === 'function') pagefind = mod;
+  let pagefind;
+  try {
+    const mod = await import('/pagefind/pagefind.js');
+    if (mod && typeof mod.search === 'function') pagefind = mod;
+  } catch {}
+  if (!pagefind) return;
+
+  const doSearch = async () => {
+    const q = searchInput.value.trim();
+    if (!q) { searchResults.innerHTML = ''; searchHint.style.display = ''; return; }
+    searchHint.style.display = 'none';
+    const { results } = await pagefind.search(q);
+    const slice = results.slice(0, 30);
+    const items = await Promise.all(slice.map(async r => { const d = await r.data(); return d; }));
+    const filtered = items.filter(d => d.url.startsWith('/{{ lang }}/'));
+    searchResults.innerHTML = filtered.map(d =>
+      `<li class="search-result"><a href="${d.url}"><div class="result-title">${escapeHtml(d.meta.title)}</div><div class="result-excerpt">${d.excerpt}</div></a></li>`
+    ).join('');
+    if (filtered.length === 0) searchResults.innerHTML = '<p class="search-hint">{{ trans(key="no_results", lang=lang) }}</p>';
+  };
+
+  searchInput.addEventListener('input', doSearch);
 })();
-searchInput.addEventListener('input', async () => {
-  const q = searchInput.value.trim();
-  if (!q || !pagefind) { searchResults.innerHTML = ''; searchHint.style.display = q ? 'none' : ''; return; }
-  searchHint.style.display = 'none';
-  const { results } = await pagefind.search(q);
-  const items = await Promise.all(results.slice(0, 30).map(async r => { const d = await r.data(); return d; }));
-  const filtered = items.filter(d => d.url.startsWith('/{{ lang }}/'));
-  searchResults.innerHTML = filtered.map(d => `<li class="search-result"><a href="${d.url}"><div class="result-title">${d.meta.title}</div><div class="result-excerpt">${d.excerpt}</div></a></li>`).join('');
-  if (filtered.length === 0) searchResults.innerHTML = '<p class="search-hint">{{ trans(key="no_results", lang=lang) }}</p>';
-});
 </script>
 {% endblock content %}

@@ -1,5 +1,7 @@
 +++
 title = "关于我"
+[extra]
+translation_key = "about"
 +++
 
 ## 你好，我是 Alex
