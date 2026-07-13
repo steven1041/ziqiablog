@@ -1,16 +1,18 @@
----
-title: "五大 AI 编程 CLI 工具横评：OpenCode、Claude Code、Codex CLI 怎么选？"
-slug: ai-coding-cli-tools-comparison
-translationKey: ai-coding-cli-tools-comparison
-date: 2026-07-13
-category: tooling
-tags: [AI编程, CLI工具, 工具对比, OpenCode, Claude Code]
-featured: false
-excerpt: 横向对比五大 AI 编程命令行工具的核心能力、优劣势与适用场景，帮你做出最适合自己的选择。
-coverAlt: 五大 AI 编程 CLI 工具概念对比图，暗色主题霓虹风格的开发者工作站
----
++++
+title = "五大 AI 编程 CLI 工具横评：OpenCode、Claude Code、Codex CLI 怎么选？"
+slug = "ai-coding-cli-tools-comparison"
+description = "横向对比五大 AI 编程命令行工具的核心能力、优劣势与适用场景，帮你做出最适合自己的选择。"
+date = 2026-07-13
+[taxonomies]
+categories = ["tooling"]
+tags = ["AI编程", "CLI工具", "工具对比", "OpenCode", "Claude Code"]
+[extra]
+translation_key = "ai-coding-cli-tools-comparison"
+featured = false
+cover_alt = "五大 AI 编程 CLI 工具概念对比图，暗色主题霓虹风格的开发者工作站"
++++
 
-<img src="/images/posts/ai-coding-cli-tools-comparison/cover.png" alt="五大 AI 编程 CLI 工具概念对比图，暗色主题霓虹风格的开发者工作站" />
+![](/images/posts/ai-coding-cli-tools-comparison/cover.png)
 
 ## 五分钟速览
 
@@ -126,7 +128,7 @@ GPT-4 系列在单文件编辑场景效率极高，与 OpenAI 生态（Assistant
 
 ## 决策指南
 
-<img src="/images/posts/ai-coding-cli-tools-comparison/diagram-1.svg" alt="AI 编程 CLI 工具选择思维导图" />
+![](/images/posts/ai-coding-cli-tools-comparison/diagram-1.svg)
 
 下面从三个维度帮你决策：
 
@@ -213,7 +215,7 @@ GPT-4 系列在单文件编辑场景效率极高，与 OpenAI 生态（Assistant
   </tbody>
 </table>
 
-<img src="/images/posts/ai-coding-cli-tools-comparison/diagram-2.svg" alt="AI 编程 CLI 工具决策流程图" />
+![](/images/posts/ai-coding-cli-tools-comparison/diagram-2.svg)
 
 ---
 

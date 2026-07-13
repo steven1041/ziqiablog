@@ -1,21 +1,19 @@
----
-title: 游戏开发测试
-slug: gamedevtest
-translationKey: gamedevtest
-date: 2024-11-01
-category: real-world
-tags: [game, dev]
-featured: true
-excerpt: 游戏开发测试游戏开发测试游戏开发测试游戏开发测试
----
++++
+title = "游戏开发测试"
+slug = "gamedevtest"
+description = "游戏开发测试游戏开发测试游戏开发测试游戏开发测试"
+date = 2024-11-01
+[taxonomies]
+categories = ["real-world"]
+tags = ["game", "dev"]
+[extra]
+translation_key = "gamedevtest"
+featured = true
++++
 
 ## 游戏引擎
 cocoscreator,unity,unreal,游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开
 
 游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试游戏开发测试
 
-<img 
-  src="/images/test.png" 
-  alt="文章插图" 
-  style={{ width: "100%", maxWidth: "800px", margin:"0 auto" }} 
-/>
+![](/images/test.png)

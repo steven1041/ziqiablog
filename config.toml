@@ -1,0 +1,70 @@
+base_url = "https://ziqia.cc"
+default_language = "cn"
+title = "ZiQia.cc — AI 开发技术博客"
+description = "关于提示工程、AI 编码工作流、工具生态等 AI 开发技术文章"
+generate_feeds = true
+generate_sitemap = true
+build_search_index = false
+
+taxonomies = [
+  { name = "categories", feed = false },
+  { name = "tags", feed = false },
+]
+
+[markdown]
+
+[markdown.highlighting]
+light_theme = "github-light"
+dark_theme = "ayu-dark"
+
+[translations]
+home = "首页"
+articles = "文章"
+categories = "分类"
+tags = "标签"
+about = "关于"
+search = "搜索"
+read_more = "阅读全文"
+reading_time = "{n} 分钟阅读"
+featured = "精选"
+previous = "上一篇"
+next = "下一篇"
+page_not_found = "页面未找到"
+table_of_contents = "目录"
+recent_posts = "最新文章"
+recent_posts_sub = "AI 开发的实践、思考与工具"
+browse_categories = "按主题浏览"
+browse_categories_sub = "选择一个分类开始探索"
+no_results = "没有找到相关结果"
+search_placeholder = "搜索文章…"
+search_hint = "输入关键词开始搜索"
+back_home = "返回首页"
+view_all = "查看全部"
+
+[languages.en]
+title = "ZiQia.cc — AI Development Blog"
+description = "Articles about prompt engineering, AI coding workflows, tooling ecosystem"
+
+[languages.en.translations]
+home = "Home"
+articles = "Articles"
+categories = "Categories"
+tags = "Tags"
+about = "About"
+search = "Search"
+read_more = "Read More"
+reading_time = "{n} min read"
+featured = "Featured"
+previous = "Previous"
+next = "Next"
+page_not_found = "Page Not Found"
+table_of_contents = "Table of Contents"
+recent_posts = "Recent Posts"
+recent_posts_sub = "Practices, insights, and tools for AI development"
+browse_categories = "Browse by Category"
+browse_categories_sub = "Pick a category to start exploring"
+no_results = "No results found"
+search_placeholder = "Search articles…"
+search_hint = "Type keywords to search"
+back_home = "Back to Home"
+view_all = "View All"
