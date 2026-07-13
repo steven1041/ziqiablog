@@ -13,7 +13,13 @@
   {% set_global count = 0 %}
   {% for cat in all_cats.items %}
     {% if cat.slug == d.slug %}
-      {% set_global count = cat.pages | length %}
+      {% set_global lang_pages = [] %}
+      {% for post in cat.pages %}
+        {% if post.permalink is containing("/" ~ page_lang ~ "/") %}
+          {% set_global lang_pages = lang_pages | concat(with=[post]) %}
+        {% endif %}
+      {% endfor %}
+      {% set_global count = lang_pages | length %}
     {% endif %}
   {% endfor %}
   {% if page_lang == "en" %}
