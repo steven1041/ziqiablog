@@ -12,10 +12,10 @@
 {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
-  "headline": "{{ page.title }}",
+  "headline": {{ page.title | json_encode | safe }},
   "datePublished": "{{ page.date }}",
-  "description": "{{ page.description }}",
-  "url": "{{ page.permalink | safe }}",
+  "description": {{ page.description | json_encode | safe }},
+  "url": {{ page.permalink | json_encode | safe }},
   "author": { "@type": "Organization", "name": "ZiQia.cc" },
   "publisher": { "@type": "Organization", "name": "ZiQia.cc" }
 }
