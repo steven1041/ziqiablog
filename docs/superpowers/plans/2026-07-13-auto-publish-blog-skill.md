@@ -6,17 +6,18 @@
 
 **架构:** 一个 SKILL.md 定义所有工作流逻辑，辅助引用文件（分类列表、frontmatter 规范）和一个 FLUX API 调用脚本。Skill 置于项目本地 `.opencode/skills/` 下。
 
-**技术栈:** OpenCode Skill (SKILL.md + YAML frontmatter), Bash (Shell), Cloudflare Workers AI API
+**技术栈:** OpenCode Skill (SKILL.md + TOML frontmatter), Bash (Shell), Cloudflare Workers AI API, Zola
 
 ## 全局约束
 
 - SKILL.md frontmatter 中 `name` 字段必须是 `auto-publish-blog`
 - `name` 必须匹配目录名（小写字母+数字+单连字符）
 - Skill 目录位于 `.opencode/skills/auto-publish-blog/`
-- 仅写入 `content/cn/posts/`、`public/images/posts/`、`out/`
-- category 必须是 9 个合法分类之一，否则阻塞发布
+- 仅写入 `content/cn/posts/`、`static/images/posts/`
+- 构建产物同步到同级目录 `myblog-deploy/`
+- category 必须是 3 个合法分类之一，否则阻塞发布
 - git push 前必须展示 diff 摘要并获用户确认
-- 所有插图嵌入 MDX 正文中，不改 blog 类型定义
+- 所有插图使用 Markdown 标准 `![]()` 语法嵌入正文
 
 ---
 
@@ -26,7 +27,7 @@
 .opencode/skills/auto-publish-blog/
 ├── SKILL.md                          # 主 skill 定义（工作流指令）
 ├── references/
-│   ├── categories.md                 # 9 个分类参考
+│   ├── categories.md                 # 3 个分类参考
 │   └── frontmatter.md                # Frontmatter 字段规范
 └── scripts/
     └── generate-flux-image.sh        # Cloudflare FLUX API 调用脚本
@@ -34,8 +35,8 @@
 
 **部署仓库初始化（一次性操作）:**
 ```
-out/                                 # 产出文件目录（已存在，Next.js build 输出）
-  → git init → 关联用户指定的 GitHub 远程仓库
+/mnt/d/projects/html5/myblog-deploy/  # 同级独立目录
+  → git clone 用户指定的 GitHub 远程仓库
 ```
 
 ---
@@ -72,14 +73,14 @@ description: |
 
 ## 概述
 
-你是 ZiQia.cc（一个 Next.js 静态博客）的自动发布助手。你的任务是将用户提供的内容转化为可上线的博客文章。
+你是 ZiQia.cc（一个 Zola 静态博客）的自动发布助手。你的任务是将用户提供的内容转化为可上线的博客文章。
 
 ## 博客项目结构
 
 ```
-content/cn/posts/         # MDX 文章目录（写文章只操作这里）
-public/images/posts/      # 文章配图目录
-out/                      # 构建产物 + 部署仓库（git 在此）
+content/cn/posts/              # 文章目录（写文章只操作这里）
+static/images/posts/           # 文章配图目录（源码管理）
+/mnt/d/projects/html5/myblog-deploy/  # 部署仓库（同级独立目录，rsync 同步）
 ```
 
 ## 三大入口
@@ -115,7 +116,7 @@ out/                      # 构建产物 + 部署仓库（git 在此）
 
 ## 通用发布流程
 
-处理管道：`内容准备 → frontmatter 填充 → 生成插图 → 创建 MDX → 构建 → 部署`
+处理管道：`内容准备 → frontmatter 填充 → 生成插图 → 创建 MD → 构建 → 部署`
 
 ### 第一步：内容准备
 
@@ -136,23 +137,24 @@ out/                      # 构建产物 + 部署仓库（git 在此）
   - 去除特殊字符
   - 如 slug 已存在，追加数字后缀（如 `rsc-deep-dive-2`）
 - `date`：当天日期 `YYYY-MM-DD`
-- `category`：从内容匹配最合适的分类（参考 `references/categories.md`），必须是以下之一：
-  `prompt-engineering`, `ai-coding-workflows`, `tooling`, `quality`,
-  `cost-efficiency`, `real-world`, `security`, `team-collab`, `ai-news`
+- `description`：50 字左右的中文摘要
+- `categories`：从内容匹配最合适的分类（参考 `references/categories.md`），必须是以下之一：
+  `ai-dev-experience`, `ai-news`, `ai-opinions`
 - `tags`：提取 3-5 个关键词作为标签
-- `excerpt`：50 字左右的中文摘要
-- `translationKey`：与 slug 相同
+- `translation_key`：与 slug 相同
 - `featured`：默认 `false`，必须询问用户确认
+- `template`：固定 `post.html`
+- `cover_alt`：从首张插图自动生成
 
-向用户展示 frontmatter 预览：
-```
-标题: [title]
-Slug: [slug]
-日期: [date]
-分类: [category]
-标签: [tags]
-摘要: [excerpt]
-精选: [featured]（询问用户）
+向用户展示 frontmatter 预览（以 TOML 格式）：
+```toml
+title = "[title]"
+slug = "[slug]"
+date = YYYY-MM-DD
+categories = ["[category]"]
+tags = ["[tag1]", "[tag2]", "[tag3]"]
+description = "[excerpt]"
+featured = [false/true]
 ```
 
 用户确认后继续。如 slug 冲突，自动追加后缀并告知。
@@ -164,14 +166,14 @@ Slug: [slug]
 **技术图表（Mermaid）：**
 - 适用场景：架构图、流程图、时序图、数据流
 - 使用 LLM 生成 Mermaid 代码，然后通过 bash 渲染为 SVG
-- 命令：`npx -y @mermaid-js/mermaid-cli mmdc -i /tmp/mermaid-input.mmd -o public/images/posts/{slug}/diagram-N.svg -b white`
+- 命令：`npx -y @mermaid-js/mermaid-cli mmdc -i /tmp/mermaid-input.mmd -o static/images/posts/{slug}/diagram-N.svg -b white`
 - 将 Mermaid 代码写入临时文件 `/tmp/mermaid-input.mmd`，渲染后删除
 - 整个渲染过程不消耗 LLM token
 
 **概念配图（FLUX）：**
 - 适用场景：封面图、抽象概念示意、主题配图
 - 使用 `scripts/generate-flux-image.sh` 脚本调用 Cloudflare API
-- 命令：`bash .opencode/skills/auto-publish-blog/scripts/generate-flux-image.sh "<英文prompt>" "public/images/posts/{slug}/illustration-N.png"`
+- 命令：`bash .opencode/skills/auto-publish-blog/scripts/generate-flux-image.sh "<英文prompt>" "static/images/posts/{slug}/illustration-N.png"`
 - FLUX prompt 用英文写，详细描述画面风格、颜色、构图
 - 如果 Cloudflare API 不可用（无 CLOUDFLARE_API_TOKEN），跳过生成并告知用户
 
@@ -179,42 +181,47 @@ Slug: [slug]
 - 确认每个生成的图片文件真实存在且大小 > 0
 - 每张图生成对应的 alt 文本
 
-### 第四步：创建 MDX 文件
+### 第四步：创建 Markdown 文件
 
-创建 `content/cn/posts/{slug}.mdx`，格式如下：
+创建 `content/cn/posts/{slug}.md`，格式如下：
 
-```markdown
----
-title: "文章标题"
-slug: the-slug
-translationKey: the-slug
-date: YYYY-MM-DD
-category: category-id
-tags: [tag1, tag2, tag3]
-featured: false
-excerpt: 50字左右的中文摘要
-coverAlt: 封面图的alt文本
----
+```toml
++++
+title = "文章标题"
+slug = "the-slug"
+description = "50字左右的中文摘要"
+date = YYYY-MM-DD
+template = "post.html"
 
-<img src="/images/posts/{slug}/diagram-1.svg" alt="xxx示意图" />
+[taxonomies]
+categories = ["category-id"]
+tags = ["tag1", "tag2", "tag3"]
+
+[extra]
+translation_key = "the-slug"
+featured = false
+cover_alt = "封面图的alt文本"
++++
+
+![xxx示意图](/images/posts/{slug}/diagram-1.svg)
 
 正文内容（Markdown 格式）...
 
-<img src="/images/posts/{slug}/illustration-1.png" alt="xxx概念图" />
+![xxx概念图](/images/posts/{slug}/illustration-1.png)
 
 更多正文...
 ```
 
 规则：
-- 插图（`<img>` 标签）嵌入在正文中合适的位置，不要全部堆在开头或结尾
+- 插图（`![]()` 语法）嵌入在正文中合适的位置，不要全部堆在开头或结尾
 - 代码块使用正确的语言标记（```typescript, ```bash 等）
 - 二级标题用 `##`，三级用 `###`
-- 文件名必须是 `{slug}.mdx`，不是 `{title}.mdx`
+- 文件名必须是 `{slug}.md`，不是 `{title}.md`
 
 ### 第五步：本地构建
 
 ```bash
-npm run build
+zola build -o /tmp/myblog-build && npx pagefind --site /tmp/myblog-build
 ```
 
 工作目录：`/mnt/d/projects/html5/myblog`
@@ -223,38 +230,37 @@ npm run build
 - 展示错误日志
 - 分析失败原因
 - 修复问题后重新构建
-- 常见问题：分类不合法、frontmatter 格式错误、MDX 语法问题
+- 常见问题：分类不合法、frontmatter 格式错误、TOML 语法问题
 
 ### 第六步：部署
 
-1. 检查 `out/` 目录是否已初始化为 git 仓库：
+1. 同步构建产物到部署仓库：
    ```bash
-   [ -d out/.git ] || git init out/
+   rsync -a --delete /tmp/myblog-build/ /mnt/d/projects/html5/myblog-deploy/
    ```
-   如果 `out/.git` 不存在，执行 `git init out/`
 
-2. 检查是否已关联远程仓库：
+2. 检查部署仓库是否已关联远程：
    ```bash
-   git -C out remote get-url origin 2>/dev/null
+   git -C /mnt/d/projects/html5/myblog-deploy remote get-url origin 2>/dev/null
    ```
    如果无输出，提示用户提供 GitHub 远程仓库地址，执行：
    ```bash
-   git -C out remote add origin <用户提供的URL>
+   git -C /mnt/d/projects/html5/myblog-deploy remote add origin <用户提供的URL>
    ```
 
 3. 展示变更摘要：
    ```bash
-   git -C out status
-   git -C out diff --stat
+   git -C /mnt/d/projects/html5/myblog-deploy status
+   git -C /mnt/d/projects/html5/myblog-deploy diff --stat
    ```
 
 4. 询问用户确认："确认发布？(y/n)"
 
 5. 提交并推送：
    ```bash
-   git -C out add -A
-   git -C out commit -m "feat: 添加文章《[title]》"
-   git -C out push origin main
+   git -C /mnt/d/projects/html5/myblog-deploy add -A
+   git -C /mnt/d/projects/html5/myblog-deploy commit -m "feat: 添加文章《[title]》"
+   git -C /mnt/d/projects/html5/myblog-deploy push origin main
    ```
 
 6. 告知用户上线 URL：`https://ziqia.cc/cn/posts/{slug}/`
@@ -263,8 +269,8 @@ npm run build
 
 提醒用户：
 ```
-源码 MDX 文件已创建在 content/cn/posts/{slug}.mdx。
-图片在 public/images/posts/{slug}/。
+源码 .md 文件已创建在 content/cn/posts/{slug}.md。
+图片在 static/images/posts/{slug}/。
 是否需要将源码变更也 commit + push 到源码仓库？
 ```
 
@@ -277,14 +283,15 @@ npm run build
 | 分类不在合法列表中 | 重新匹配，展示合法分类列表 |
 | Cloudflare API 无权限 | 跳过 FLUX 配图，仅保留 Mermaid 图表 |
 | Mermaid 渲染失败 | 跳过该图表，告知用户 |
-| npm run build 失败 | 展示错误、修复、重试，最多 3 次 |
-| out/ 未关联远程 | 提示用户提供 GitHub URL |
+| zola build 失败 | 展示错误、修复、重试，最多 3 次 |
+| pagefind 失败 | 警告但不阻塞 |
+| 部署仓库未关联远程 | 提示用户提供 GitHub URL |
 | git push 失败 | 展示错误，提示检查网络/权限 |
 
 ## 安全边界（严格遵守）
 
-- 只写入 `content/cn/posts/`、`public/images/posts/`、`out/`
-- 不修改 `src/`、`tailwind.config.ts`、`next.config.mjs` 等源码
+- 只写入 `content/cn/posts/`、`static/images/posts/`
+- 不修改 `templates/`、`config.toml`、`static/style.css`、`static/copy-button.js` 等源码文件
 - 不删除任何已有文章
 - 不修改已有文章（除非用户明确要求）
 - git push 前必须获得用户确认
@@ -314,7 +321,7 @@ git commit -m "feat: 创建 auto-publish-blog skill 主定义"
 
 **Interfaces:**
 - Consumes: SKILL.md 中引用此文件获取分类信息
-- Produces: 9 个合法分类的 ID 和中文名称，供 SKILL.md 工作流中查询
+- Produces: 3 个合法分类的 ID 和中文名称，供 SKILL.md 工作流中查询
 
 - [ ] **Step 1: 编写 categories.md**
 
@@ -323,32 +330,20 @@ git commit -m "feat: 创建 auto-publish-blog skill 主定义"
 ```markdown
 # 博客分类参考
 
-博客使用以下 9 个分类。创建文章时 `category` 字段必须是以下 ID 之一。
+博客使用以下 3 个分类。创建文章时 `categories` 字段必须是以下 ID 之一。
 
 | ID | 中文名 | 说明 |
 |----|--------|------|
-| `prompt-engineering` | 提示工程 | Prompt 设计、技巧、优化方法 |
-| `ai-coding-workflows` | AI 编码工作流 | AI 辅助开发的工作流程、最佳实践 |
-| `tooling` | 工具生态 | 编辑器、CLI、插件、IDE 配置 |
-| `quality` | 质量保障 | 测试、代码审查、CI/CD、代码质量 |
-| `cost-efficiency` | 成本与效率 | API 成本优化、Token 管理、性能优化 |
-| `real-world` | 项目实践 | 真实项目案例分析、实战经验 |
-| `security` | 安全与合规 | 安全漏洞、隐私保护、合规要求 |
-| `team-collab` | 团队协作 | 团队管理、协作工具、代码规范 |
-| `ai-news` | 业界新闻 | AI 行业动态、新工具发布、趋势分析 |
+| `ai-dev-experience` | AI开发经验 | AI 辅助开发的实践、经验总结、最佳实践 |
+| `ai-news` | AI新闻 | AI 行业动态、新工具发布、趋势分析 |
+| `ai-opinions` | AI观点 | 对 AI 技术方向的见解、深度分析、评论文章 |
 
 ## 分类选择指南
 
 根据文章主题选择最匹配的分类：
-- 讲 Prompt 怎么写 → `prompt-engineering`
-- 讲 AI 怎么辅助写代码的流程 → `ai-coding-workflows`
-- 讲具体工具/插件怎么用 → `tooling`
-- 讲测试/审查/质量 → `quality`
-- 讲省钱/提效 → `cost-efficiency`
-- 讲实际项目做了什么 → `real-world`
-- 讲安全问题 → `security`
-- 讲团队怎么配合 → `team-collab`
-- 讲行业新闻动态 → `ai-news`
+- 讲 AI 辅助开发的实际经验/教程 → `ai-dev-experience`
+- 讲行业新闻、新工具发布 → `ai-news`
+- 讲观点、分析、评论 → `ai-opinions`
 ```
 
 - [ ] **Step 2: Commit**
@@ -376,37 +371,42 @@ git commit -m "feat: 添加博客分类参考文件"
 ```markdown
 # Frontmatter 字段规范
 
-博客使用 YAML frontmatter，位于 MDX 文件的 `---` 分隔符之间。
+博客使用 TOML frontmatter，位于 Markdown 文件的 `+++` 分隔符之间。
 
 ## 字段定义
 
-| 字段 | 类型 | 必需 | 说明 |
-|------|------|------|------|
-| `title` | string | 是 | 文章标题，用引号包裹 |
-| `slug` | string | 是 | URL 路径片段，小写字母+数字+连字符 |
-| `translationKey` | string | 是 | 历史兼容字段，设为与 slug 相同 |
-| `date` | string | 是 | ISO 日期 YYYY-MM-DD |
-| `category` | string | 是 | 分类 ID，必须是 references/categories.md 中定义的合法值 |
-| `tags` | string[] | 否 | 标签列表 `[tag1, tag2]` |
-| `featured` | boolean | 否 | 是否精选，默认 false |
-| `excerpt` | string | 否 | 文章摘要，约 50 字 |
-| `coverAlt` | string | 否 | 封面图的 alt 文本 |
-| `readingTime` | number | 否 | 自动计算，无需手动设置 |
+| 字段 | 位置 | 类型 | 必需 | 说明 |
+|------|------|------|------|------|
+| `title` | 顶层 | string | 是 | 文章标题，用引号包裹 |
+| `slug` | 顶层 | string | 是 | URL 路径片段，小写字母+数字+连字符 |
+| `description` | 顶层 | string | 否 | 文章摘要，约 50 字 |
+| `date` | 顶层 | date | 是 | ISO 日期 YYYY-MM-DD |
+| `template` | 顶层 | string | 是 | 固定为 `"post.html"` |
+| `categories` | `[taxonomies]` | string[] | 是 | 分类列表，必须是合法分类 ID |
+| `tags` | `[taxonomies]` | string[] | 否 | 标签列表 `["tag1", "tag2"]` |
+| `translation_key` | `[extra]` | string | 是 | 与 slug 相同的标识符 |
+| `featured` | `[extra]` | boolean | 否 | 是否精选，默认 false |
+| `cover_alt` | `[extra]` | string | 否 | 封面图的 alt 文本 |
 
 ## 示例
 
-```yaml
----
-title: "深入理解 React Server Components"
-slug: rsc-deep-dive
-translationKey: rsc-deep-dive
-date: 2024-12-01
-category: ai-coding-workflows
-tags: [react, rsc, architecture]
-featured: false
-excerpt: 从原理到实践，探索 RSC 如何重塑前端数据流与组件边界。
-coverAlt: React Server Components 示意图
----
+```toml
++++
+title = "深入理解 React Server Components"
+slug = "rsc-deep-dive"
+description = "从原理到实践，探索 RSC 如何重塑前端数据流与组件边界。"
+date = 2026-07-13
+template = "post.html"
+
+[taxonomies]
+categories = ["ai-dev-experience"]
+tags = ["React", "RSC", "架构"]
+
+[extra]
+translation_key = "rsc-deep-dive"
+featured = false
+cover_alt = "React Server Components 示意图"
++++
 ```
 
 ## Slug 生成规则
@@ -419,17 +419,11 @@ coverAlt: React Server Components 示意图
 
 ## 分类校验规则
 
-`category` 必须是以下 9 个值之一，否则博客构建会报错：
+`categories` 必须是以下 3 个值之一，否则博客构建会报错：
 ```
-prompt-engineering
-ai-coding-workflows
-tooling
-quality
-cost-efficiency
-real-world
-security
-team-collab
+ai-dev-experience
 ai-news
+ai-opinions
 ```
 ```
 
@@ -541,50 +535,38 @@ git commit -m "feat: 添加 Cloudflare FLUX 生图脚本"
 ### Task 5: 初始化部署仓库
 
 **Files:**
-- 在 `out/` 中初始化 git 仓库（如已存在则跳过）
+- 在项目同级目录 `git clone` 部署仓库
 
 **Interfaces:**
 - Consumes: 用户提供的 GitHub 远程仓库 URL
-- Produces: `out/.git` 已初始化并关联远程仓库
+- Produces: `/mnt/d/projects/html5/myblog-deploy/` 已克隆并关联远程仓库
 
-- [ ] **Step 1: 检查 out/ 目录**
-
-```bash
-ls -la out/
-```
-
-预期：`out/` 已存在（Next.js 构建输出目录）。
-
-- [ ] **Step 2: 检查是否需要初始化 git**
+- [ ] **Step 1: 检查 myblog-deploy 目录**
 
 ```bash
-[ -d out/.git ] && echo "已初始化" || echo "未初始化"
+ls -la /mnt/d/projects/html5/myblog-deploy/
 ```
 
-如果输出 "未初始化"：
+预期：目录存在且有 `.git/`，关联远程仓库。
 
-```bash
-git init out/
-```
-
-- [ ] **Step 3: 确认远程仓库**
+- [ ] **Step 2: 如果目录不存在**
 
 引导用户：
 ```
 请先在 GitHub 上创建一个空仓库（如 myblog-deploy），
-然后将远程仓库 URL 告诉我。
+然后告诉我远程仓库 URL。
 ```
 
 等待用户提供 URL 后：
 
 ```bash
-git -C out remote add origin <用户提供的URL>
+cd /mnt/d/projects/html5 && git clone <用户提供的URL>
 ```
 
-- [ ] **Step 4: 验证配置**
+- [ ] **Step 3: 验证配置**
 
 ```bash
-git -C out remote -v
+git -C /mnt/d/projects/html5/myblog-deploy remote -v
 ```
 
 预期输出：显示正确的 origin URL。
@@ -636,20 +618,20 @@ test -x .opencode/skills/auto-publish-blog/scripts/generate-flux-image.sh && ech
 - [ ] **Step 4: 验证部署仓库配置**
 
 ```bash
-git -C out remote -v 2>&1
+git -C /mnt/d/projects/html5/myblog-deploy remote -v 2>&1
 ```
 
 预期：显示正确的 origin URL。
 
-- [ ] **Step 5: 运行现有测试确保未引入破坏性变更**
+- [ ] **Step 5: 运行构建验证**
 
 ```bash
-npm test
+zola build -o /tmp/myblog-build-test
 ```
 
 工作目录：`/mnt/d/projects/html5/myblog`
 
-预期：所有测试通过。
+预期：构建成功，无错误。
 
 - [ ] **Step 6: 最终提交**
 

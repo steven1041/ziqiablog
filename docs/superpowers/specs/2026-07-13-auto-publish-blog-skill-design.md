@@ -7,7 +7,7 @@
 
 ## 概述
 
-创建一个 OpenCode Skill，支持从对话中提取 Q&A 改写为博客文章，或从本地文件/口述导入内容。自动完成 frontmatter 填充、插图生成、MDX 文件创建、本地构建及部署仓库推送。一句话：**对话中随口一句"发博客"，几分钟后文章上线。**
+创建一个 OpenCode Skill，支持从对话中提取 Q&A 改写为博客文章，或从本地文件/口述导入内容。自动完成 frontmatter 填充、插图生成、Markdown 文件创建、本地构建及部署仓库推送。一句话：**对话中随口一句"发博客"，几分钟后文章上线。**
 
 ---
 
@@ -33,26 +33,27 @@
 
 ### 2.1 字段处理
 
-| 字段 | 处理方式 | 说明 |
-|------|----------|------|
-| `title` | LLM 从内容提炼 | 用户可覆盖 |
-| `slug` | 自动生成拼音/英文简写 | 从 title 推导 |
-| `date` | 自动取当天 `YYYY-MM-DD` | — |
-| `category` | LLM 从 9 个分类中匹配 | 必须为合法分类 ID |
-| `tags` | LLM 提取 3-5 个关键词 | string[] |
-| `excerpt` | LLM 自动摘要，约 50 字 | — |
-| `translationKey` | 设为与 slug 相同 | 历史遗留字段，保持兼容 |
-| `coverAlt` | 从首张插图自动生成 | 无插图则省略 |
-| `featured` | 发布时询问用户 | 默认 `false` |
-| `readingTime` | 不设置 | 构建时自动计算 |
+| 字段 | 处理方式 | Zola TOML 格式 |
+|------|----------|----------------|
+| `title` | LLM 从内容提炼 | `title = "..."` |
+| `slug` | 自动生成 | `slug = "..."` |
+| `date` | 自动取当天 `YYYY-MM-DD` | `date = YYYY-MM-DD` |
+| `description` | LLM 自动摘要，约 50 字 | `description = "..."` |
+| `template` | 固定值 | `template = "post.html"` |
+| `categories` | LLM 从 3 个分类中匹配 | `[taxonomies]` 下 `categories = ["..."]` |
+| `tags` | LLM 提取 3-5 个关键词 | `[taxonomies]` 下 `tags = ["...", "..."]` |
+| `translation_key` | 与 slug 相同 | `[extra]` 下 `translation_key = "..."` |
+| `cover_alt` | 从首张插图自动生成 | `[extra]` 下 `cover_alt = "..."` |
+| `featured` | 发布时询问用户 | `[extra]` 下 `featured = false` |
 
 ### 2.2 分类列表
 
-合法的 `category` 值（来源 `src/lib/categories.ts`）：
+合法的 `categories` 值（来源 `config.toml` 的 `[extra]`）：
 
 ```
-prompt-engineering, ai-coding-workflows, tooling, quality,
-cost-efficiency, real-world, security, team-collab, ai-news
+ai-dev-experience  → AI开发经验
+ai-news            → AI新闻
+ai-opinions        → AI观点
 ```
 
 ### 2.3 必填字段校验
@@ -61,9 +62,30 @@ cost-efficiency, real-world, security, team-collab, ai-news
 - `title`
 - `slug`
 - `date`
-- `category`（且必须在合法列表中）
+- `categories`（且必须在合法列表中）
 
-`tags`、`excerpt`、`featured` 缺失仅警告，不阻塞。
+`tags`、`description`、`featured` 缺失仅警告，不阻塞。
+
+### 2.4 Frontmatter 示例
+
+```toml
++++
+title = "深入理解 React Server Components"
+slug = "rsc-deep-dive"
+description = "从原理到实践，探索 RSC 如何重塑前端数据流与组件边界。"
+date = 2026-07-13
+template = "post.html"
+
+[taxonomies]
+categories = ["ai-dev-experience"]
+tags = ["React", "RSC", "架构"]
+
+[extra]
+translation_key = "rsc-deep-dive"
+featured = false
+cover_alt = "React Server Components 示意图"
++++
+```
 
 ---
 
@@ -71,7 +93,7 @@ cost-efficiency, real-world, security, team-collab, ai-news
 
 ### 3.1 总策略
 
-采用混合方案：Mermaid 生成技术图表（免费，bash 渲染），Cloudflare FLUX.1 生成概念配图（日均免费 173 张，完全够用）。
+采用混合方案：Mermaid 生成技术图表（免费，bash 渲染），Cloudflare FLUX.1 生成概念配图（日均免费 173 张）。
 
 | 类型 | 适用场景 | 生成方式 | 工具 |
 |------|----------|----------|------|
@@ -85,34 +107,42 @@ cost-efficiency, real-world, security, team-collab, ai-news
   → LLM 扫描全文，标注 2-3 个"此处应有图"的位置
   → 每处判断：适合技术图表（Mermaid）还是概念配图（FLUX）
   → 生成
-  → 保存到 public/images/posts/{slug}/
-  → MDX 中 <img> 引用
+  → 保存到 static/images/posts/{slug}/
+  → Markdown 中 ![](url) 引用
 ```
 
 ### 3.3 Mermaid 渲染
 
-- LLM 输出 Mermaid 代码块（几十 token，成本极低）
-- 通过 `npx -y @mermaid-js/mermaid-cli mmdc` 命令渲染为 SVG（首次自动安装，无需预安装）
-- SVG 保存到 `public/images/posts/{slug}/diagram-N.svg`
+- LLM 输出 Mermaid 代码块
+- 通过 `npx -y @mermaid-js/mermaid-cli mmdc` 命令渲染为 SVG
+- SVG 保存到 `static/images/posts/{slug}/diagram-N.svg`
 - 整个过程不产生 LLM token 消耗
 
 ### 3.4 FLUX 生图
 
 - 模型：`@cf/black-forest-labs/flux-1-schnell`
 - 平台：Cloudflare Workers AI
-- 成本：约 58 Neurons/张，每日免费 10,000 Neurons ≈ 173 张
-- 调用方式：bash `curl` 直接请求 Cloudflare API
-- 前提：用户需在环境变量中配置 `CLOUDFLARE_ACCOUNT_ID` 和 `CLOUDFLARE_API_TOKEN`
-- API 基础地址：`https://api.cloudflare.com/client/v4/accounts/{ACCOUNT_ID}/ai/run/@cf/black-forest-labs/flux-1-schnell`
+- 调用方式：bash `curl` 请求 Cloudflare API
+- 前提：环境变量 `CLOUDFLARE_ACCOUNT_ID` 和 `CLOUDFLARE_API_TOKEN`
 
 ### 3.5 图片存储
 
 ```
-public/images/posts/{slug}/
-├── cover.png          # 封面图（FLUX 概念配图，嵌入 MDX 开头）
+static/images/posts/{slug}/
+├── cover.png          # 封面图（FLUX 概念配图）
 ├── diagram-1.svg      # 技术图表（Mermaid SVG）
 ├── diagram-2.svg      # 技术图表
 └── illustration-1.png # 概念配图（FLUX）
+```
+
+构建时 Zola 自动将 `static/` 内容复制到 `public/`。
+
+### 3.6 文章中引用方式
+
+使用标准 Markdown 图片语法：
+
+```markdown
+![RSC 架构示意图](/images/posts/rsc-deep-dive/diagram-1.svg)
 ```
 
 ---
@@ -121,32 +151,33 @@ public/images/posts/{slug}/
 
 ### 4.1 双仓库架构
 
-| 仓库 | 用途 | 内容 |
-|------|------|------|
-| `myblog`（源码仓库） | 源码 + MDX 内容 | `content/`, `src/`, `public/`, ... |
-| `myblog-deploy`（部署仓库） | 纯静态产物 | `out/` 目录下的 HTML/JS/CSS/SVG/PNG |
-| Cloudflare Pages → | 直接拉取部署仓库 | 零构建，纯静态托管 |
+| 仓库 | 位置 | 用途 | 内容 |
+|------|------|------|------|
+| `myblog`（源码仓库） | `/mnt/d/projects/html5/myblog/` | 源码 + Markdown 内容 | `content/`, `templates/`, `static/`, `config.toml` |
+| `myblog-deploy`（部署仓库） | `/mnt/d/projects/html5/myblog-deploy/` | 纯静态产物 | HTML/CSS/JS/SVG/PNG |
+| Cloudflare Pages → | 直接拉取部署仓库 | 零构建，纯静态托管 | — |
 
 ### 4.2 发布管道
 
 ```
-创建 MDX + 生成图片
-  → npm run build（本地，所有构建错误在此暴露）
-  → cp out/ 到 myblog-deploy 仓库
+创建 .md + 生成图片（存 static/images/posts/{slug}/）
+  → zola build -o /tmp/myblog-build
+  → npx pagefind --site /tmp/myblog-build
+  → rsync -a --delete /tmp/myblog-build/ /mnt/d/projects/html5/myblog-deploy/
   → myblog 源码仓库 git commit + push
   → myblog-deploy 仓库 git commit + push
-  → Cloudflare Pages 自动检测部署仓库更新 → 上线
+  → Cloudflare Pages 自动上线
 ```
 
 ### 4.3 部署仓库初始化
 
-- 在 `out/` 目录中 `git init` 并关联用户在 GitHub 新建的远程仓库
-- 此操作为一次性设置，后续发布只做 `git add/commit/push`
-- 部署仓库地址由用户在首次使用时提供
+- 用户在 GitHub 新建空仓库（如 `myblog-deploy`）
+- 在项目同级目录 `git clone` 到 `/mnt/d/projects/html5/myblog-deploy/`
+- 一次性设置，后续发布只做 `rsync + git add/commit/push`
 
 ### 4.4 git 操作范围
 
-本 skill 只操作部署仓库（`myblog-deploy`）的 git。源码仓库的 `git commit + push` 可选（用户可自行决定是否提交源码变更）。
+本 skill 操作部署仓库（`myblog-deploy`）的 git。源码仓库的 `git commit + push` 可选。
 
 ---
 
@@ -162,34 +193,17 @@ Skill:
   3. 展示暂定标题和分类："标题：[xxx]，分类：[yyy]，可以吗？"
   4. 用户确认或修改
   5. 询问 featured："是否设为精选？(y/n)"
-  6. 生成 Mermaid 图表 + FLUX 配图
-  7. 创建 MDX 文件
+  6. 生成 Mermaid 图表 + FLUX 配图（存 static/images/posts/{slug}/）
+  7. 创建 .md 文件（content/cn/posts/{slug}.md）
   8. 展示 diff 摘要
   9. "确认发布？(y/n)"
-  10. 构建 + 推送部署仓库
-  11. 输出上线 URL
+  10. zola build + pagefind → rsync → git push
+  11. 输出上线 URL：https://ziqia.cc/cn/posts/{slug}/
 ```
 
-### 5.2 文件导入
+### 5.2 文件导入 / 口述创建
 
-```
-用户: "导入博客 /home/stone/draft.md"
-Skill:
-  1. 读取文件
-  2. LLM 分析内容，自动生成 frontmatter
-  3. 展示 frontmatter，询问确认
-  4. 后续同 5.1 步骤 5-11
-```
-
-### 5.3 口述创建
-
-```
-用户: "发布博客：标题《xxx》，内容：balabala..."
-Skill:
-  1. 解析标题和正文
-  2. LLM 润色、自动生成 frontmatter
-  3. 后续同 5.1 步骤 3-11
-```
+流程同 5.1，仅内容来源不同。
 
 ---
 
@@ -197,23 +211,24 @@ Skill:
 
 | 场景 | 处理 |
 |------|------|
-| 分类不合法 | 提示合法分类列表，要求重选 |
-| slug 重复 | 自动追加数字后缀（如 `xxx-2`） |
-| Cloudflare API 不可用 | 跳过 FLUX 配图，仅用 Mermaid，告知用户 |
-| mermaid-cli 渲染失败 | 跳过该图表，仅用 FLUX，告知用户 |
-| npm run build 失败 | 展示错误日志，停止发布，不推送 |
-| git push 失败 | 展示错误，提示用户检查网络/权限 |
+| 分类不合法 | 提示合法分类列表（3 个），要求重选 |
+| slug 重复 | 自动追加数字后缀 |
+| Cloudflare API 不可用 | 跳过 FLUX 配图，仅用 Mermaid |
+| mermaid-cli 渲染失败 | 跳过该图表，告知用户 |
+| `zola build` 失败 | 展示错误日志，停止发布 |
+| `pagefind` 失败 | 警告但不阻塞 |
+| git push 失败 | 展示错误，提示检查网络/权限 |
 
 ---
 
 ## 7. Skill 文件结构
 
 ```
-~/.opencode/skills/auto-publish-blog/
+.opencode/skills/auto-publish-blog/
 ├── SKILL.md                       # Skill 定义与工作流指令
 ├── references/
-│   ├── categories.md              # 9 个分类参考
-│   └── frontmatter.md             # Frontmatter 字段规范
+│   ├── categories.md              # 3 个分类参考
+│   └── frontmatter.md             # Frontmatter 字段规范（TOML）
 └── scripts/
     └── generate-flux-image.sh     # Cloudflare FLUX API 调用脚本
 ```
@@ -229,17 +244,25 @@ Skill:
 | `CLOUDFLARE_ACCOUNT_ID` | 是（如需 FLUX 配图） | Cloudflare 账号 ID |
 | `CLOUDFLARE_API_TOKEN` | 是（如需 FLUX 配图） | Cloudflare API Token |
 
-### 8.2 部署仓库
+### 8.2 系统依赖
+
+| 工具 | 必需 | 说明 |
+|------|------|------|
+| `zola` | 是 | 本地构建 |
+| `npx` | 是 | 运行 pagefind 和 mermaid-cli |
+| `rsync` | 是 | 同步构建产物到部署仓库 |
+
+### 8.3 部署仓库
 
 - 用户在 GitHub 新建空仓库（如 `myblog-deploy`）
-- 首次使用时在本地 `out/` 初始化并关联
+- 首次使用时 `git clone` 到项目同级目录
 
 ---
 
 ## 9. 安全边界
 
-- 仅写入 `content/cn/posts/`、`public/images/posts/`、`out/`
-- 不修改 `src/`、`tailwind.config.ts`、`next.config.mjs` 等源码文件
+- 仅写入 `content/cn/posts/`、`static/images/posts/`、部署仓库
+- 不修改 `templates/`、`config.toml`、`static/style.css`、`static/copy-button.js`
 - `git push` 前必须展示 diff 摘要并获得用户确认
 - 不自动修改已有文章，除非用户明确要求
 
@@ -250,5 +273,5 @@ Skill:
 - 文章编辑/更新已有文章
 - 定时发布
 - 自动交叉引用/关联推荐
-- 多语言支持
+- 英文文章发布支持
 - 视频/GIF 配图
