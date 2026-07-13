@@ -5,7 +5,7 @@ description = "从原理到实践，探索 RSC 如何重塑前端数据流与组
 date = 2024-12-01
 template = "post.html"
 [taxonomies]
-categories = ["ai-coding-workflows"]
+categories = ["ai-dev-experience"]
 tags = ["react", "rsc", "architecture"]
 [extra]
 translation_key = "rsc-deep-dive"

@@ -5,7 +5,7 @@ description = "横向对比五大 AI 编程命令行工具的核心能力、优�
 date = 2026-07-13
 template = "post.html"
 [taxonomies]
-categories = ["tooling"]
+categories = ["ai-dev-experience"]
 tags = ["AI编程", "CLI工具", "工具对比", "OpenCode", "Claude Code"]
 [extra]
 translation_key = "ai-coding-cli-tools-comparison"

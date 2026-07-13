@@ -5,7 +5,7 @@ description = "AI development blog — practices, insights, and tooling."
 date = 2024-01-01
 template = "post.html"
 [taxonomies]
-categories = ["ai-coding-workflows"]
+categories = ["ai-dev-experience"]
 tags = ["welcome"]
 [extra]
 translation_key = "welcome"

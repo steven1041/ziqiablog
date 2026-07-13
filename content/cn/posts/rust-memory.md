@@ -5,7 +5,7 @@ description = "理解所有权、借用与生命周期，写出更安全的系�
 date = 2024-11-01
 template = "post.html"
 [taxonomies]
-categories = ["tooling"]
+categories = ["ai-dev-experience"]
 tags = ["rust", "memory"]
 [extra]
 translation_key = "rust-memory"
