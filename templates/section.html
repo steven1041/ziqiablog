@@ -85,7 +85,7 @@
         {% endif %}
       {% endfor %}
     {% endif %}
-    {% if count > 0 %}<a href="{{ cat_href }}" class="cat-icon-link">{% endif %}
+    <a {% if count > 0 %}href="{{ cat_href }}" class="cat-icon-link"{% else %}class="cat-icon-link"{% endif %}>
       <div class="cat-icon" style="background: #E8F0FE">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="#4285F4">
           <rect x="3" y="3" width="18" height="18" rx="4" opacity="0.2"/>
@@ -93,7 +93,7 @@
         </svg>
       </div>
       <span>{% if page_lang == "en" %}{{ d.en }}{% else %}{{ d.cn }}{% endif %}</span>
-    {% if count > 0 %}</a>{% endif %}
+    </a>
     {% endfor %}
   </div>
   {% endif %}
