@@ -6,3 +6,5 @@ const nextConfig = {
   serverExternalPackages: ['next-mdx-remote', 'shiki', 'gray-matter', 'reading-time'],
 };
 export default nextConfig;
+
+import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());
