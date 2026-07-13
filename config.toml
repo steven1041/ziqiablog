@@ -51,6 +51,10 @@ view_all = "查看全部"
 [languages.en]
 title = "ZiQia.cc — AI Development Blog"
 description = "Articles about prompt engineering, AI coding workflows, tooling ecosystem"
+taxonomies = [
+  { name = "categories" },
+  { name = "tags" },
+]
 
 [languages.en.translations]
 home = "Home"
