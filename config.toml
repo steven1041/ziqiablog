@@ -2,6 +2,7 @@ base_url = "https://ziqia.cc"
 default_language = "cn"
 title = "ZiQia.cc — AI 开发技术博客"
 description = "关于提示工程、AI 编码工作流、工具生态等 AI 开发技术文章"
+author = "ZiQia.cc"
 generate_feeds = true
 generate_sitemap = true
 build_search_index = false
@@ -16,6 +17,13 @@ taxonomies = [
 [markdown.highlighting]
 light_theme = "github-light"
 dark_theme = "ayu-dark"
+
+[extra]
+categories = [
+  { slug = "ai-dev-experience", cn = "AI开发经验", en = "AI Dev Experience" },
+  { slug = "ai-news", cn = "AI新闻", en = "AI News" },
+  { slug = "ai-opinions", cn = "AI观点", en = "AI Opinions" },
+]
 
 [translations]
 home = "首页"
@@ -44,6 +52,10 @@ view_all = "查看全部"
 [languages.en]
 title = "ZiQia.cc — AI Development Blog"
 description = "Articles about prompt engineering, AI coding workflows, tooling ecosystem"
+taxonomies = [
+  { name = "categories", feed = false },
+  { name = "tags", feed = false },
+]
 
 [languages.en.translations]
 home = "Home"
