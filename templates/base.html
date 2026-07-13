@@ -22,7 +22,7 @@
 </head>
 <body>
   <header class="header">
-    <a href="{{ get_url(path='/' ~ page_lang ~ '/') }}" class="header-logo">
+    <a href="{{ get_url(path='/', lang=page_lang) }}" class="header-logo">
       <svg width="28" height="28" viewBox="0 0 28 28" style="flex-shrink:0">
         <circle cx="14" cy="14" r="12.5" fill="none" stroke="#1A73E8" stroke-width="1.5"/>
         <circle cx="14" cy="14" r="10" fill="none" stroke="#1A73E8" stroke-width="0.5" opacity="0.4"/>
@@ -31,10 +31,10 @@
       ZiQia.cc
     </a>
     <nav class="header-nav">
-      <a href="{{ get_url(path='/' ~ page_lang ~ '/') }}" {% if cur == get_url(path='/' ~ page_lang ~ '/') %}class="active"{% endif %}>{{ trans(key="home", lang=page_lang) }}</a>
+      <a href="{{ get_url(path='/', lang=page_lang) }}" {% if cur == get_url(path='/', lang=page_lang) %}class="active"{% endif %}>{{ trans(key="home", lang=page_lang) }}</a>
       <a href="{% if page_lang == 'cn' %}{{ get_url(path='/categories/') }}{% else %}{{ get_url(path='/' ~ page_lang ~ '/categories/') }}{% endif %}" {% if cur is containing('/categories/') %}class="active"{% endif %}>{{ trans(key="categories", lang=page_lang) }}</a>
       <a href="{% if page_lang == 'cn' %}{{ get_url(path='/tags/') }}{% else %}{{ get_url(path='/' ~ page_lang ~ '/tags/') }}{% endif %}" {% if cur is containing('/tags/') %}class="active"{% endif %}>{{ trans(key="tags", lang=page_lang) }}</a>
-      <a href="{{ get_url(path='/' ~ page_lang ~ '/about/') }}" {% if cur is containing('/about/') %}class="active"{% endif %}>{{ trans(key="about", lang=page_lang) }}</a>
+      <a href="{{ get_url(path='@/about.md', lang=page_lang) }}" {% if cur is containing('/about/') %}class="active"{% endif %}>{{ trans(key="about", lang=page_lang) }}</a>
     </nav>
     <div class="header-actions">
       <div class="lang-switch">
@@ -47,9 +47,9 @@
           {% endfor %}
         {% else %}
           {% if page_lang == "cn" %}
-          <a href="{{ get_url(path='/en/') }}">EN</a>
+          <a href="{{ get_url(path='/', lang='en') }}">EN</a>
           {% else %}
-          <a href="{{ get_url(path='/cn/') }}">中文</a>
+          <a href="{{ get_url(path='/', lang='cn') }}">中文</a>
           {% endif %}
         {% endif %}
         {% endblock lang_switch %}
