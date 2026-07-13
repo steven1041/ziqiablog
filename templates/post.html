@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ page.title }} — {{ config.title }}{% endblock title %}
+{% block title %}{{ page.title }} — {{ site_title }}{% endblock title %}
 {% block description %}{{ page.description }}{% endblock description %}
 
 {% block extra_head %}
@@ -33,7 +33,7 @@
       <h1>{{ page.title }}</h1>
       <div class="post-meta">
         <span class="post-avatar" style="background: linear-gradient(135deg, #4285F4, #34A853)">Z</span>
-        <span>ZiQia.cc · {{ page.date }} · {{ trans(key="reading_time", lang=lang) | replace(from="{n}", to=page.reading_time ~ "") }}</span>
+        <span>ZiQia.cc · {{ page.date }} · {{ trans(key="reading_time", lang=page_lang) | replace(from="{n}", to=page.reading_time ~ "") }}</span>
       </div>
     </div>
     <div class="prose">
@@ -42,7 +42,7 @@
     <nav class="post-nav">
       {% if page.lower %}
       <a href="{{ page.lower.permalink }}">
-        <div class="nav-label">{{ trans(key="previous", lang=lang) }}</div>
+        <div class="nav-label">{{ trans(key="previous", lang=page_lang) }}</div>
         <div class="nav-title">{{ page.lower.title }}</div>
       </a>
       {% else %}
@@ -50,7 +50,7 @@
       {% endif %}
       {% if page.higher %}
       <a href="{{ page.higher.permalink }}" style="text-align:right">
-        <div class="nav-label">{{ trans(key="next", lang=lang) }}</div>
+        <div class="nav-label">{{ trans(key="next", lang=page_lang) }}</div>
         <div class="nav-title">{{ page.higher.title }}</div>
       </a>
       {% else %}
@@ -60,7 +60,7 @@
   </article>
   <aside class="toc-sidebar">
     {% if page.toc %}
-    <div class="toc-label">{{ trans(key="table_of_contents", lang=lang) }}</div>
+    <div class="toc-label">{{ trans(key="table_of_contents", lang=page_lang) }}</div>
     <nav>
       {% for h2 in page.toc %}
       <a href="{{ h2.permalink | safe }}" class="{% if h2.children %}level-2{% endif %}">{{ h2.title }}</a>

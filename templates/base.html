@@ -39,10 +39,18 @@
     <div class="header-actions">
       <div class="lang-switch">
         {% block lang_switch %}
-        {% if page_lang == "cn" %}
-        <a href="{{ get_url(path='/en/') }}">EN</a>
+        {% if page and page.translations %}
+          {% for t in page.translations %}
+          {% if t.lang != page_lang %}
+          <a href="{{ t.permalink | safe }}">{{ t.lang | upper }}</a>
+          {% endif %}
+          {% endfor %}
         {% else %}
-        <a href="{{ get_url(path='/cn/') }}">中文</a>
+          {% if page_lang == "cn" %}
+          <a href="{{ get_url(path='/en/') }}">EN</a>
+          {% else %}
+          <a href="{{ get_url(path='/cn/') }}">中文</a>
+          {% endif %}
         {% endif %}
         {% endblock lang_switch %}
       </div>

@@ -1,94 +1,11 @@
-{% extends "base.html" %}
-
-{% block content %}
-{% set posts_section = get_section(path=lang ~ "/posts/_index.md") %}
-{% set all_posts = posts_section.pages %}
-{% set featured = all_posts | filter(attribute="extra.featured", value=true) | first %}
-
-{% if featured %}
-<section class="section">
-  <div class="hero-card">
-    {% set cat_color = "" %}
-    {% set cat_bg = "" %}
-    {% for cat in config.taxonomies %}
-    {% if cat.name == "categories" %}{% set_global cat_color = "#1A73E8" %}{% endif %}
-    {% endfor %}
-    <div class="hero-visual" style="background: linear-gradient(135deg, #4285F4 0%, #174EA6 100%)">
-      <div class="bg-circle"></div>
-      <div class="content">
-        <span class="badge">{{ trans(key="featured", lang=lang) }}</span>
-        <div class="title">{{ featured.title | split(pat=" ") | slice(end=3) | join(sep=" ") }}</div>
-      </div>
-    </div>
-    <div class="hero-text">
-      <div class="label">{{ trans(key="featured", lang=lang) }}</div>
-      <h1>{{ featured.title }}</h1>
-      <p>{{ featured.description }}</p>
-      <div class="hero-meta">
-        <div class="hero-avatar" style="background: linear-gradient(135deg, #4285F4, #34A853)">Z</div>
-        <div class="hero-attribution">
-          <div class="name">ZiQia.cc</div>
-          <div class="meta">{{ featured.date }} · {{ trans(key="reading_time", lang=lang) | replace(from="{n}", to=featured.reading_time ~ "") }}</div>
-        </div>
-        <a href="{{ featured.permalink }}" class="btn-primary">{{ trans(key="read_more", lang=lang) }}</a>
-      </div>
-    </div>
-  </div>
-</section>
-{% endif %}
-
-<section class="section">
-  <div class="section-header">
-    <div>
-      <h2>{{ trans(key="recent_posts", lang=lang) }}</h2>
-      <p>{{ trans(key="recent_posts_sub", lang=lang) }}</p>
-    </div>
-  </div>
-  <div class="grid md:grid-cols-2 lg:grid-cols-3">
-    {% for post in all_posts | slice(end=6) %}
-    <article class="article-card">
-      <a href="{{ post.permalink }}">
-        <div class="card-visual" style="background: linear-gradient(135deg, #E8F0FE 0%, #4285F4 100%)">
-          {% if post.taxonomies.categories %}
-          <span class="card-cat">{{ post.taxonomies.categories[0] }}</span>
-          {% endif %}
-        </div>
-        <div class="card-body">
-          <h3>{{ post.title }}</h3>
-          <p>{{ post.description }}</p>
-          <div class="card-footer">
-            <span>{{ post.date }} · {{ trans(key="reading_time", lang=lang) | replace(from="{n}", to=post.reading_time ~ "") }}</span>
-            <span class="read-more">{{ trans(key="read_more", lang=lang) }} →</span>
-          </div>
-        </div>
-      </a>
-    </article>
-    {% endfor %}
-  </div>
-</section>
-
-<section class="section">
-  <div class="section-header">
-    <div>
-      <h2>{{ trans(key="browse_categories", lang=lang) }}</h2>
-      <p>{{ trans(key="browse_categories_sub", lang=lang) }}</p>
-    </div>
-  </div>
-  {% set categories = get_taxonomy(kind="categories", lang=lang, required=false) %}
-  {% if categories and categories.items %}
-  <div class="grid grid-cols-9">
-    {% for cat in categories.items %}
-    <a href="{{ cat.permalink }}" class="cat-icon-link">
-      <div class="cat-icon" style="background: #E8F0FE">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="#4285F4">
-          <rect x="3" y="3" width="18" height="18" rx="4" opacity="0.2"/>
-          <circle cx="12" cy="12" r="4"/>
-        </svg>
-      </div>
-      <span>{{ cat.name }}</span>
-    </a>
-    {% endfor %}
-  </div>
-  {% endif %}
-</section>
-{% endblock content %}
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>{{ config.title }}</title>
+  <meta http-equiv="refresh" content="0; url=/cn/">
+</head>
+<body>
+  <p><a href="/cn/">{{ trans(key="home", lang="cn") }}</a></p>
+</body>
+</html>

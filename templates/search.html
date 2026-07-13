@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}{{ trans(key="search", lang=lang) }} — {{ config.title }}{% endblock title %}
+{% block title %}{{ trans(key="search", lang=page_lang) }} — {{ site_title }}{% endblock title %}
 {% block content %}
 <div class="search-page">
-  <input type="search" id="search-input" class="search-input" placeholder="{{ trans(key="search_placeholder", lang=lang) }}" aria-label="{{ trans(key="search", lang=lang) }}">
-  <p id="search-hint" class="search-hint">{{ trans(key="search_hint", lang=lang) }}</p>
+  <input type="search" id="search-input" class="search-input" placeholder="{{ trans(key="search_placeholder", lang=page_lang) }}" aria-label="{{ trans(key="search", lang=page_lang) }}">
+  <p id="search-hint" class="search-hint">{{ trans(key="search_hint", lang=page_lang) }}</p>
   <ul id="search-results" class="search-results"></ul>
 </div>
 <script>
@@ -32,11 +32,11 @@ function escapeHtml(str) {
     const { results } = await pagefind.search(q);
     const slice = results.slice(0, 30);
     const items = await Promise.all(slice.map(async r => { const d = await r.data(); return d; }));
-    const filtered = items.filter(d => d.url.startsWith('/{{ lang }}/'));
+    const filtered = items.filter(d => d.url.startsWith('/{{ page_lang }}/'));
     searchResults.innerHTML = filtered.map(d =>
       `<li class="search-result"><a href="${d.url}"><div class="result-title">${escapeHtml(d.meta.title)}</div><div class="result-excerpt">${d.excerpt}</div></a></li>`
     ).join('');
-    if (filtered.length === 0) searchResults.innerHTML = '<p class="search-hint">{{ trans(key="no_results", lang=lang) }}</p>';
+    if (filtered.length === 0) searchResults.innerHTML = '<p class="search-hint">{{ trans(key="no_results", lang=page_lang) }}</p>';
   };
 
   searchInput.addEventListener('input', doSearch);

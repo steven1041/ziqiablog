@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
-{% block title %}{{ term.name }} — {{ config.title }}{% endblock title %}
-{% block description %}{{ term.name }} {{ trans(key="categories", lang=lang) }}{% endblock description %}
+{% block title %}{{ term.name }} — {{ site_title }}{% endblock title %}
+{% block description %}{{ term.name }} {{ trans(key="categories", lang=page_lang) }}{% endblock description %}
 
 {% block content %}
 <h1 class="page-heading">{{ term.name }}</h1>
@@ -17,8 +17,8 @@
         <h3>{{ post.title }}</h3>
         <p>{{ post.description }}</p>
         <div class="card-footer">
-          <span>{{ post.date }} · {{ trans(key="reading_time", lang=lang) | replace(from="{n}", to=post.reading_time ~ "") }}</span>
-          <span class="read-more">{{ trans(key="read_more", lang=lang) }} →</span>
+          <span>{{ post.date }} · {{ trans(key="reading_time", lang=page_lang) | replace(from="{n}", to=post.reading_time ~ "") }}</span>
+          <span class="read-more">{{ trans(key="read_more", lang=page_lang) }} →</span>
         </div>
       </div>
     </a>
