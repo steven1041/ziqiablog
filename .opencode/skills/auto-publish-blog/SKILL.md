@@ -109,23 +109,27 @@ cover_alt = "[封面图 alt 文本]"
 - 适用场景：文章封面，用于 `cover_alt` 和首页卡片展示
 - 首先生成封面图，保存在 `static/images/posts/{slug}/cover.png`
 - 使用 `scripts/generate-flux-image.sh` 脚本调用 Cloudflare API
-- 命令：`bash .opencode/skills/auto-publish-blog/scripts/generate-flux-image.sh "<英文prompt>" "static/images/posts/{slug}/cover.png"`
+- 命令：`bash .opencode/skills/auto-publish-blog/scripts/generate-flux-image.sh "<英文prompt>" "static/images/posts/{slug}/cover.png" 1200 632`
+- 封面图尺寸固定为 1200x632（Open Graph 标准，宽高须为 8 的倍数）
 - FLUX prompt 用英文写，详细描述画面风格、颜色、构图
 - 如果 Cloudflare API 不可用（无 CLOUDFLARE_API_TOKEN），跳过生成并告知用户
 - 封面图会自动作为文章正文的第一张插图
 
 **技术图表（Mermaid）：**
 - 适用场景：架构图、流程图、时序图、数据流
-- 使用 LLM 生成 Mermaid 代码，然后通过 bash 渲染为 SVG
-- 命令：`npx -y @mermaid-js/mermaid-cli mmdc -i /tmp/mermaid-input.mmd -o static/images/posts/{slug}/diagram-N.svg -b white`
-- 将 Mermaid 代码写入临时文件 `/tmp/mermaid-input.mmd`，渲染后删除
-- 在写入临时文件前添加 `trap 'rm -f /tmp/mermaid-input.mmd' EXIT` 确保总是清理
-- 整个渲染过程不消耗 LLM token
+- 使用 LLM 生成 Mermaid 代码，然后通过 mermaid.ink API 渲染为 SVG
+- 使用 `scripts/render-mermaid.sh` 脚本简化调用：
+  ```bash
+  bash .opencode/skills/auto-publish-blog/scripts/render-mermaid.sh "<mermaid-code>" "<output-path>"
+  ```
+- 脚本内部使用 python3 进行 base64 编码，通过 curl 调用 mermaid.ink API
+- 整个渲染过程不消耗 LLM token，仅需 HTTP 请求
 
 **概念配图（FLUX）：**
 - 适用场景：抽象概念示意、主题配图（非封面）
 - 使用 `scripts/generate-flux-image.sh` 脚本调用 Cloudflare API
-- 命令：`bash .opencode/skills/auto-publish-blog/scripts/generate-flux-image.sh "<英文prompt>" "static/images/posts/{slug}/illustration-N.png"`
+- 命令：`bash .opencode/skills/auto-publish-blog/scripts/generate-flux-image.sh "<英文prompt>" "static/images/posts/{slug}/illustration-N.png" 1200 632`
+- 默认尺寸 1200x632，可根据需要调整（宽高须为 8 的倍数）
 - FLUX prompt 用英文写，详细描述画面风格、颜色、构图
 - 如果 Cloudflare API 不可用（无 CLOUDFLARE_API_TOKEN），跳过生成并告知用户
 - 脚本使用 `jq` 安全构建 JSON（避免 prompt 中的特殊字符破坏 JSON），使用 `curl -o` 直接写入二进制文件（避免命令替换丢失 NUL 字节）
@@ -189,36 +193,15 @@ zola build -o /tmp/myblog-build && npx pagefind --site /tmp/myblog-build
 
 ### 第六步：部署
 
-1. 同步构建产物到部署仓库：
-   ```bash
-   rsync -a --delete /tmp/myblog-build/ /mnt/d/projects/html5/myblog-deploy/
-   ```
+1. 询问用户确认："确认发布？(y/n)"
 
-2. 检查部署仓库是否已关联远程：
+2. 使用 wrangler 直接上传构建产物到 Cloudflare Pages：
    ```bash
-   git -C /mnt/d/projects/html5/myblog-deploy remote get-url origin 2>/dev/null
+   npx wrangler pages deploy /tmp/myblog-build --project-name=myblog-deploy
    ```
-   如果无输出，提示用户提供 GitHub 远程仓库地址，执行：
-   ```bash
-   git -C /mnt/d/projects/html5/myblog-deploy remote add origin <用户提供的URL>
-   ```
+   需要环境变量 `CLOUDFLARE_API_TOKEN` 和 `CLOUDFLARE_ACCOUNT_ID`（已在 ~/.bashrc 中配置）。
 
-3. 展示变更摘要：
-   ```bash
-   git -C /mnt/d/projects/html5/myblog-deploy status
-   git -C /mnt/d/projects/html5/myblog-deploy diff --stat
-   ```
-
-4. 询问用户确认："确认发布？(y/n)"
-
-5. 提交并推送：
-   ```bash
-   git -C /mnt/d/projects/html5/myblog-deploy add -A
-   git -C /mnt/d/projects/html5/myblog-deploy commit -m "feat: 添加文章《[title]》"
-   git -C /mnt/d/projects/html5/myblog-deploy push origin main
-   ```
-
-6. 告知用户上线 URL：`https://ziqia.cc/cn/posts/{slug}/`
+3. 告知用户上线 URL：`https://ziqia.cc/cn/posts/{slug}/`
 
 ### 第七步：同步源码仓库（可选）
 
@@ -240,8 +223,7 @@ zola build -o /tmp/myblog-build && npx pagefind --site /tmp/myblog-build
 | Mermaid 渲染失败 | 跳过该图表，告知用户 |
 | zola build 失败 | 展示错误、修复、重试，最多 3 次 |
 | pagefind 失败 | 警告但不阻塞 |
-| 部署仓库未关联远程 | 提示用户提供 GitHub URL |
-| git push 失败 | 展示错误，提示检查网络/权限 |
+| wrangler deploy 失败 | 检查 CLOUDFLARE_API_TOKEN 是否有效，提示用户检查权限 |
 
 ## 安全边界（严格遵守）
 
@@ -249,5 +231,5 @@ zola build -o /tmp/myblog-build && npx pagefind --site /tmp/myblog-build
 - 不修改 `templates/`、`config.toml`、`static/style.css`、`static/copy-button.js` 等源码文件
 - 不删除任何已有文章
 - 不修改已有文章（除非用户明确要求）
-- git push 前必须获得用户确认
+- 部署前必须获得用户确认
 - FLUX prompt 中不得包含 NSFW 内容
